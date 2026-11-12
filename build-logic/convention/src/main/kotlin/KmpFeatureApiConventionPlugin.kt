@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.talkdesk.conversation.buildlogic.libs
 
 /**
- * `conversation.kmp.feature.api` — `feature/<name>/api`: the public contract of a feature
+ * `conversation.kmp.feature.api` — `<name>/api`: the public contract of a feature
  * (`@Serializable` NavKey routes + the interfaces other features may use). No implementation.
  */
 class KmpFeatureApiConventionPlugin : Plugin<Project> {
