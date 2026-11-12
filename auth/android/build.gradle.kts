@@ -5,4 +5,5 @@ plugins {
 dependencies {
     implementation(project(":auth:api"))
     implementation(project(":auth:impl"))
+    implementation(project(":core:designsystem"))
 }
