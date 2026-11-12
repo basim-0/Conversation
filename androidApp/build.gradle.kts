@@ -4,5 +4,6 @@ plugins {
 
 dependencies {
     implementation(project(":sharedUI"))
+    implementation(project(":core:designsystem"))
     implementation(libs.androidx.activity.compose)
 }
