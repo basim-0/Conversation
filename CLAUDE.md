@@ -5,7 +5,7 @@
   - Android: **Jetpack Compose** (androidx, Compose BOM) in Android-only modules (`<name>/android`, `core:designsystem`, `core:navigation`, `androidApp`). No Compose Multiplatform, no Compose in any KMP module.
   - iOS: **SwiftUI** in `iosApp/iosApp/` (`<Name>/`, `DesignSystem/`, `Navigation/`), consuming the shared ViewModels through the `ConversationKit` framework (SKIE for Flow/sealed/suspend interop).
 - Target layout: `core/*` + one top-level folder per feature (`<name>/api|impl|android`, e.g. `auth/`), shared composition root + iOS umbrella framework in `:conversation-kit`, Android composition root in `androidApp`, convention plugins in `build-logic`.
-- **Current state:** `build-logic` exists; the app modules are still the wizard template (`sharedLogic` builds the `SharedLogic` framework that iOS imports, plus `sharedUI`). `core/*`, `conversation-kit` and any feature do not exist yet. Never assume a class, task or module exists: look first. If something is missing, say so and propose it; don't silently create it.
+- **Current state:** `build-logic` exists; the app modules are still the wizard template (`sharedLogic` builds the `SharedLogic` framework that iOS imports, plus `sharedUI`). `core:designsystem` and `auth/` exist; other `core/*` modules and `conversation-kit` do not exist yet. Never assume a class, task or module exists: look first. If something is missing, say so and propose it; don't silently create it.
 - **Single environment**: no STG/QA/PROD, flavors or environment enum. Base URL from build config; logging only in debug builds.
 - Presentation is **MVI**: shared `MviViewModel` + data-class `State` + `onIntent(Intent)` + `Effect` flow; each platform renders `State` and sends `Intent`s. **Never use Circuit.**
 - Navigation: routes are `@Serializable` `NavKey` data in `<name>:api` (shared). Android: Navigation 3 `NavDisplay`. iOS: SwiftUI `NavigationStack` driven by the same routes.
@@ -16,6 +16,19 @@
 - In KMP modules everything lives in `commonMain`; `androidMain`/`iosMain` hold only thin expect/actual and platform glue.
 - Versions only in `gradle/libs.versions.toml`. Build config lives in `build-logic` convention plugins (`conversation.*`); module build files hold only plugin aliases + dependencies.
 - Verify: `./gradlew check` (guards + tests), `./gradlew :androidApp:assembleDebug`, and for iOS `xcodebuild -project iosApp/iosApp.xcodeproj -scheme iosApp -destination 'generic/platform=iOS Simulator' build`.
+
+## Design system
+- **Source of truth:** the "Talkdesk Agent Mobile" design system (Cobalt palette): https://claude.ai/artifact/GaXk1DBHBDar5w1R7Yn6P7. Read it (Artifact tool, `read`, starting with `project/README.md`, then `project/tokens.json` and `project/components/<Name>/README.md`) before any UI work. Never guess its values.
+- **Implementation:** Android `core:designsystem` (`TalkdeskTheme`, `TalkdeskIcons`, `component/Talkdesk*`); iOS `iosApp/iosApp/DesignSystem/` (`.talkdeskTheme()`, `TalkdeskIcons`, `Components/Talkdesk*`). Both use the same token names.
+- Every screen renders inside `TalkdeskTheme` (Android) / `.talkdeskTheme()` (iOS). Style UI only with theme tokens (`TalkdeskTheme.colors/typography/spacing/shapes/sizes`, `TalkdeskColors`, `TalkdeskTypography`…). No hard-coded colours, font sizes or dimensions, and no `cobalt-*` primitives.
+- **Use the existing Talkdesk components** (buttons, text fields, search, cards, dialogs, toasts, banners, progress…) and `TalkdeskIcons`. Don't use a stock Material/SwiftUI control where a Talkdesk component exists.
+- **Never create a custom component without the user's permission.** This covers one-off styled composables/views inside features. If no existing component fits, stop, say what's missing and ask.
+- **Adding a component to the design system** (`core:designsystem` or `DesignSystem/`) needs both:
+  1. the component exists in the design system linked above (follow its card exactly: sizes, states, tokens), and
+  2. the user's explicit permission.
+  If it isn't in the design system, don't add it; tell the user it needs to be designed there first.
+- Colours (`TalkdeskColors`) and icons (`ic_td_*.xml` drawables, `TalkdeskIcons`, `Assets.xcassets/Icons`) are generated from the design system's `tokens.json` and icon set. Regenerate them rather than hand-editing values, and ask before changing tokens.
+- Build each component on both platforms with light and dark previews.
 
 ## KMP architecture
 
