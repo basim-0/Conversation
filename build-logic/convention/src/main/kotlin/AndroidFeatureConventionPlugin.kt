@@ -5,7 +5,7 @@ import org.gradle.kotlin.dsl.dependencies
 import org.talkdesk.conversation.buildlogic.libs
 
 /**
- * `conversation.android.feature` — `feature/<name>/android` modules: the Compose UI of a feature.
+ * `conversation.android.feature` — `<name>/android` modules: the Compose UI of a feature.
  * Renders the shared MVI State and sends Intents; no business logic here.
  */
 class AndroidFeatureConventionPlugin : Plugin<Project> {

@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.talkdesk.conversation.buildlogic.libs
 
 /**
- * `conversation.kmp.feature.impl` — `feature/<name>/impl`: shared domain, data and MVI ViewModel
+ * `conversation.kmp.feature.impl` — `<name>/impl`: shared domain, data and MVI ViewModel
  * of a feature, wired with Koin. Depends on its own `:api` and `core:*`, never on another `:impl`.
  */
 class KmpFeatureImplConventionPlugin : Plugin<Project> {

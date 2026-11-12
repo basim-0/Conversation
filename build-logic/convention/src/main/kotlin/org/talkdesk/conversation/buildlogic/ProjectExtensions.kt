@@ -16,7 +16,7 @@ internal val Project.targetSdkVersion: Int get() = libs.version("android-targetS
 
 internal const val NAMESPACE_ROOT = "org.talkdesk.conversation"
 
-/** `:feature:auth:impl` -> `org.talkdesk.conversation.feature.auth.impl` */
+/** `:auth:impl` -> `org.talkdesk.conversation.auth.impl` */
 internal val Project.derivedNamespace: String
     get() = path.split(':')
         .filter { it.isNotBlank() }
