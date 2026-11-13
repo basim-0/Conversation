@@ -3,12 +3,15 @@ package org.talkdesk.conversation.kit
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
 import org.koin.mp.KoinPlatform
+import org.talkdesk.conversation.activity.impl.di.activityModule
+import org.talkdesk.conversation.activity.impl.presentation.ActivityViewModel
 import org.talkdesk.conversation.auth.api.AuthSession
 import org.talkdesk.conversation.auth.impl.data.Es256Signer
 import org.talkdesk.conversation.auth.impl.di.authIosModule
 import org.talkdesk.conversation.auth.impl.di.authModule
 import org.talkdesk.conversation.auth.impl.domain.OAuthCredentialsProvider
 import org.talkdesk.conversation.auth.impl.presentation.LoginViewModel
+import org.talkdesk.conversation.core.database.databaseIosModule
 import org.talkdesk.conversation.core.network.networkIosModule
 
 /**
@@ -24,8 +27,10 @@ object ConversationBootstrap {
         startKoin {
             modules(
                 networkIosModule,
+                databaseIosModule,
                 authIosModule,
                 authModule,
+                activityModule,
                 module {
                     single<Es256Signer> { es256Signer }
                     single<OAuthCredentialsProvider> { credentials }
@@ -37,6 +42,10 @@ object ConversationBootstrap {
     /** A new login ViewModel. The caller owns it and must call [ScopedViewModel.clear] when done. */
     fun makeLoginViewModel(): ScopedViewModel<LoginViewModel> =
         scopedViewModel { KoinPlatform.getKoin().get<LoginViewModel>() }
+
+    /** A new Activity ViewModel. The caller owns it and must call [ScopedViewModel.clear] when done. */
+    fun makeActivityViewModel(): ScopedViewModel<ActivityViewModel> =
+        scopedViewModel { KoinPlatform.getKoin().get<ActivityViewModel>() }
 
     val authSession: AuthSession get() = KoinPlatform.getKoin().get()
 }

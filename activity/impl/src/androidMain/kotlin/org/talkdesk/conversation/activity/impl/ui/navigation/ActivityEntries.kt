@@ -1,4 +1,4 @@
-package org.talkdesk.conversation.activity.impl.ui
+package org.talkdesk.conversation.activity.impl.ui.navigation
 
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey

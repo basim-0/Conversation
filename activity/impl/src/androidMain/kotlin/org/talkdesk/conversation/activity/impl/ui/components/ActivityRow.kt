@@ -1,4 +1,4 @@
-package org.talkdesk.conversation.activity.impl.ui
+package org.talkdesk.conversation.activity.impl.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -12,7 +12,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -33,6 +32,8 @@ import org.talkdesk.conversation.activity.impl.presentation.ActivityItem
 import org.talkdesk.conversation.activity.impl.presentation.ActivityKind
 import org.talkdesk.conversation.activity.impl.presentation.CallDirection
 import org.talkdesk.conversation.activity.impl.presentation.MessageChannel
+import org.talkdesk.conversation.activity.impl.ui.ActivityPreviewData
+import org.talkdesk.conversation.activity.impl.ui.ActivityPreviews
 
 /**
  * One Activity row: a call-direction or channel icon, the spelled-out sub-line ("Missed · Support
@@ -53,7 +54,9 @@ internal fun ActivityRow(
         is ActivityKind.Call -> when (kind.direction) {
             CallDirection.Inbound -> TalkdeskIcons.PhoneIn to colors.callInbound
             CallDirection.Outbound -> TalkdeskIcons.PhoneOut to colors.callOutbound
-            CallDirection.Missed, CallDirection.Abandoned -> TalkdeskIcons.PhoneMissed to colors.callMissed
+            CallDirection.Missed, CallDirection.Abandoned, CallDirection.NotAnswered ->
+                TalkdeskIcons.PhoneMissed to colors.callMissed
+            CallDirection.Transfer -> TalkdeskIcons.Transfer to colors.iconBrand
         }
         is ActivityKind.Message -> when (kind.channel) {
             MessageChannel.Sms -> TalkdeskIcons.Sms
@@ -61,19 +64,24 @@ internal fun ActivityRow(
             MessageChannel.Email -> TalkdeskIcons.Mail
         } to colors.iconBrand
     }
+    val title = item.title ?: stringResource(R.string.activity_unknown_contact)
     val kindLabel = stringResource(kind.labelRes())
-    val subline = stringResource(R.string.activity_subline, kindLabel, item.detail)
+    val byAgent = item.agentName?.let {
+        stringResource(if (item.isMine) R.string.activity_by_agent_me else R.string.activity_by_agent, it)
+    }
+    val detail = listOfNotNull(byAgent, item.durationLabel).joinToString(stringResource(R.string.activity_separator))
+    val subline = if (detail.isEmpty()) kindLabel else stringResource(R.string.activity_subline, kindLabel, detail)
     val isCall = kind is ActivityKind.Call
-    val callBackLabel = stringResource(R.string.activity_call_back, item.title)
+    val callBackLabel = stringResource(R.string.activity_call_back, title)
     val unread = if (item.unreadCount > 0) pluralStringResource(R.plurals.activity_unread, item.unreadCount, item.unreadCount) else null
     val description = listOfNotNull(
-        stringResource(R.string.activity_row_description, kindLabel, item.title, item.detail, item.timeLabel),
+        stringResource(R.string.activity_row_description, subline, title, item.timeLabel),
         unread,
     ).joinToString(", ")
     val canCallBack = isCall && !offline
 
     TalkdeskListRow(
-        title = item.title,
+        title = title,
         subtitle = subline,
         showDivider = showDivider,
         onClick = { onIntent(ActivityIntent.OpenItem(item.id)) },
@@ -105,6 +113,8 @@ private fun ActivityKind.labelRes(): Int = when (this) {
         CallDirection.Outbound -> R.string.activity_kind_outbound
         CallDirection.Missed -> R.string.activity_kind_missed
         CallDirection.Abandoned -> R.string.activity_kind_abandoned
+        CallDirection.NotAnswered -> R.string.activity_kind_not_answered
+        CallDirection.Transfer -> R.string.activity_kind_transfer
     }
     is ActivityKind.Message -> when (channel) {
         MessageChannel.Sms -> R.string.activity_kind_sms
@@ -133,9 +143,9 @@ private fun CallBackButton(label: String, icon: ImageVector, onClick: () -> Unit
 @Composable
 private fun ActivityRowPreview() = TalkdeskTheme {
     Column(Modifier.background(TalkdeskTheme.colors.bgWindow)) {
-        ActivityMock.loaded().sections.first().items.forEachIndexed { index, item ->
+        ActivityPreviewData.loaded().sections.first().items.forEachIndexed { index, item ->
             ActivityRow(item, offline = false, showDivider = index > 0, onIntent = {})
         }
-        ActivityRow(ActivityMock.loaded().sections.first().items.first(), offline = true, showDivider = true, onIntent = {})
+        ActivityRow(ActivityPreviewData.loaded().sections.first().items.first(), offline = true, showDivider = true, onIntent = {})
     }
 }

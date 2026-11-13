@@ -1,4 +1,4 @@
-package org.talkdesk.conversation.activity.impl.ui
+package org.talkdesk.conversation.activity.impl.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -17,6 +17,7 @@ import org.talkdesk.conversation.core.designsystem.theme.TalkdeskElevation
 import org.talkdesk.conversation.core.designsystem.theme.TalkdeskTheme
 import org.talkdesk.conversation.core.designsystem.theme.talkdeskShadow
 import org.talkdesk.conversation.activity.impl.R
+import org.talkdesk.conversation.activity.impl.ui.ActivityPreviews
 
 /**
  * "New call" extended FAB: `action-primary` fill, `text-on-brand`, `radius-lg`. Collapses to the

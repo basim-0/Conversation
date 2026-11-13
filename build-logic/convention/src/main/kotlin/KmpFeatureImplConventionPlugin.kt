@@ -31,8 +31,10 @@ class KmpFeatureImplConventionPlugin : Plugin<Project> {
                 sourceSets.commonMain.dependencies {
                     ownApi?.let { implementation(it) }
                     implementation(libs.findLibrary("koin-core").get())
+                    implementation(libs.findLibrary("koin-core-viewmodel").get())
                     implementation(libs.findLibrary("androidx-lifecycle-viewmodel").get())
                     implementation(libs.findLibrary("kotlinx-serialization-json").get())
+                    implementation(libs.findLibrary("kotlinx-datetime").get())
                 }
                 sourceSets.getByName("androidMain").dependencies {
                     implementation(project(":core:designsystem"))

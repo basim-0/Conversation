@@ -25,7 +25,10 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
@@ -37,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import org.talkdesk.conversation.core.designsystem.component.TalkdeskBanner
 import org.talkdesk.conversation.core.designsystem.component.TalkdeskBannerVariant
 import org.talkdesk.conversation.core.designsystem.component.TalkdeskFilterChip
+import org.talkdesk.conversation.core.designsystem.component.TalkdeskSpinner
 import org.talkdesk.conversation.core.designsystem.component.TalkdeskTab
 import org.talkdesk.conversation.core.designsystem.component.TalkdeskTabs
 import org.talkdesk.conversation.core.designsystem.icon.TalkdeskIcons
@@ -48,6 +52,12 @@ import org.talkdesk.conversation.activity.impl.presentation.ActivityDay
 import org.talkdesk.conversation.activity.impl.presentation.ActivityIntent
 import org.talkdesk.conversation.activity.impl.presentation.ActivityState
 import org.talkdesk.conversation.activity.impl.presentation.ActivityTab
+import org.talkdesk.conversation.activity.impl.ui.components.ActivityEmpty
+import org.talkdesk.conversation.activity.impl.ui.components.ActivityFailed
+import org.talkdesk.conversation.activity.impl.ui.components.ActivityLoading
+import org.talkdesk.conversation.activity.impl.ui.components.ActivityRow
+import org.talkdesk.conversation.activity.impl.ui.components.NewCallFab
+import org.talkdesk.conversation.activity.impl.ui.components.labelRes
 
 /**
  * Activity tab: calls and conversations in one timeline, grouped by day. Stateless: renders
@@ -67,6 +77,16 @@ fun ActivityScreen(
         derivedStateOf { listState.firstVisibleItemIndex == 0 && listState.firstVisibleItemScrollOffset < collapseAfterPx }
     }
     val content = state.content
+    val currentOnIntent by rememberUpdatedState(onIntent)
+    // Ask for the next page when the last rows come into view.
+    LaunchedEffect(listState) {
+        snapshotFlow {
+            val info = listState.layoutInfo
+            val nearEnd = (info.visibleItemsInfo.lastOrNull()?.index ?: 0) >= info.totalItemsCount - LOAD_MORE_THRESHOLD
+            // Emits again when the list grows while still near the end (a short page).
+            if (nearEnd) info.totalItemsCount else -1
+        }.collect { total -> if (total >= 0) currentOnIntent(ActivityIntent.LoadMore) }
+    }
     val showFab = content is ActivityContent.Loaded && !state.isOffline
     val showChips = state.selectedTab == ActivityTab.All && content !is ActivityContent.Loading
 
@@ -133,7 +153,19 @@ fun ActivityScreen(
                             content.sections.forEach { section ->
                                 item(key = "header-${section.day}") { DayHeader(section.day) }
                                 itemsIndexed(section.items, key = { _, item -> item.id }) { index, item ->
-                                    ActivityRow(item, offline = state.isOffline, showDivider = index > 0, onIntent = onIntent)
+                                    ActivityRow(
+                                        item,
+                                        offline = state.isOffline,
+                                        showDivider = index > 0,
+                                        onIntent = onIntent
+                                    )
+                                }
+                            }
+                            if (state.isLoadingMore) {
+                                item(key = "loading-more") {
+                                    Box(Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
+                                        TalkdeskSpinner()
+                                    }
                                 }
                             }
                         }
@@ -169,55 +201,57 @@ private fun DayHeader(day: ActivityDay) {
     )
 }
 
+private const val LOAD_MORE_THRESHOLD = 3
+
 // region Previews
 
 @ActivityPreviews
 @Composable
-private fun ActivityAllPreview() = TalkdeskTheme { ActivityScreen(ActivityMock.state(), {}) }
+private fun ActivityAllPreview() = TalkdeskTheme { ActivityScreen(ActivityPreviewData.state(), {}) }
 
 @ActivityPreviews
 @Composable
-private fun ActivityMissedPreview() = TalkdeskTheme { ActivityScreen(ActivityMock.state(ActivityTab.Missed), {}) }
+private fun ActivityMissedPreview() = TalkdeskTheme { ActivityScreen(ActivityPreviewData.state(ActivityTab.Missed), {}) }
 
 @ActivityPreviews
 @Composable
 private fun ActivityFilteredPreview() =
-    TalkdeskTheme { ActivityScreen(ActivityMock.state(channels = setOf(ActivityChannel.WhatsApp)), {}) }
+    TalkdeskTheme { ActivityScreen(ActivityPreviewData.state(channels = setOf(ActivityChannel.WhatsApp)), {}) }
 
 @ActivityPreviews
 @Composable
-private fun ActivityLoadingPreview() = TalkdeskTheme { ActivityScreen(ActivityMock.state(content = ActivityContent.Loading), {}) }
+private fun ActivityLoadingPreview() = TalkdeskTheme { ActivityScreen(ActivityPreviewData.state(content = ActivityContent.Loading), {}) }
 
 @ActivityPreviews
 @Composable
 private fun ActivityEmptyAllPreview() =
-    TalkdeskTheme { ActivityScreen(ActivityMock.state(content = ActivityContent.Loaded(emptyList())), {}) }
+    TalkdeskTheme { ActivityScreen(ActivityPreviewData.state(content = ActivityContent.Loaded(emptyList())), {}) }
 
 @ActivityPreviews
 @Composable
 private fun ActivityEmptyMissedPreview() =
-    TalkdeskTheme { ActivityScreen(ActivityMock.state(ActivityTab.Missed, content = ActivityContent.Loaded(emptyList())), {}) }
+    TalkdeskTheme { ActivityScreen(ActivityPreviewData.state(ActivityTab.Missed, content = ActivityContent.Loaded(emptyList())), {}) }
 
 @ActivityPreviews
 @Composable
 private fun ActivityEmptyFilteredPreview() = TalkdeskTheme {
-    ActivityScreen(ActivityMock.state(channels = setOf(ActivityChannel.WhatsApp), content = ActivityContent.Loaded(emptyList())), {})
+    ActivityScreen(ActivityPreviewData.state(channels = setOf(ActivityChannel.WhatsApp), content = ActivityContent.Loaded(emptyList())), {})
 }
 
 @ActivityPreviews
 @Composable
-private fun ActivityOfflinePreview() = TalkdeskTheme { ActivityScreen(ActivityMock.state(isOffline = true), {}) }
+private fun ActivityOfflinePreview() = TalkdeskTheme { ActivityScreen(ActivityPreviewData.state(isOffline = true), {}) }
 
 @ActivityPreviews
 @Composable
-private fun ActivityFailedPreview() = TalkdeskTheme { ActivityScreen(ActivityMock.state(content = ActivityContent.Failed), {}) }
+private fun ActivityFailedPreview() = TalkdeskTheme { ActivityScreen(ActivityPreviewData.state(content = ActivityContent.Failed), {}) }
 
 @ActivityPreviews
 @Composable
-private fun ActivityRefreshingPreview() = TalkdeskTheme { ActivityScreen(ActivityMock.state(isRefreshing = true), {}) }
+private fun ActivityRefreshingPreview() = TalkdeskTheme { ActivityScreen(ActivityPreviewData.state(isRefreshing = true), {}) }
 
 @Preview(name = "Font scale 2x", widthDp = 360, heightDp = 800, fontScale = 2f, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-private fun ActivityLargeFontPreview() = TalkdeskTheme { ActivityScreen(ActivityMock.state(), {}) }
+private fun ActivityLargeFontPreview() = TalkdeskTheme { ActivityScreen(ActivityPreviewData.state(), {}) }
 
 // endregion

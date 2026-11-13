@@ -7,7 +7,6 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":core:network"))
             implementation(project(":core:datastore"))
-            implementation(libs.koin.core.viewmodel)
         }
         androidMain.dependencies {
             implementation(libs.androidx.browser)

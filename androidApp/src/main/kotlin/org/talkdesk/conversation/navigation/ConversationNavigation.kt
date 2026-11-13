@@ -13,7 +13,7 @@ import androidx.navigation3.ui.NavDisplay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
-import org.talkdesk.conversation.activity.impl.ui.activityEntries
+import org.talkdesk.conversation.activity.impl.ui.navigation.activityEntries
 import org.talkdesk.conversation.auth.api.AuthSession
 import org.talkdesk.conversation.auth.api.LoginRoute
 import org.talkdesk.conversation.auth.api.SessionState

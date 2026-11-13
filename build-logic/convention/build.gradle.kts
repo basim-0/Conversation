@@ -23,6 +23,8 @@ dependencies {
     compileOnly(libs.kotlin.gradlePlugin)
     compileOnly(libs.kotlin.composeGradlePlugin)
     compileOnly(libs.kotlin.serializationGradlePlugin)
+    compileOnly(libs.ksp.gradlePlugin)
+    compileOnly(libs.androidx.room.gradlePlugin)
 }
 
 tasks {
@@ -57,6 +59,10 @@ gradlePlugin {
         register("kmpFeatureApi") {
             id = libs.plugins.conversation.kmp.feature.api.get().pluginId
             implementationClass = "KmpFeatureApiConventionPlugin"
+        }
+        register("kmpRoom") {
+            id = libs.plugins.conversation.kmp.room.get().pluginId
+            implementationClass = "KmpRoomConventionPlugin"
         }
         register("kmpFeatureImpl") {
             id = libs.plugins.conversation.kmp.feature.impl.get().pluginId

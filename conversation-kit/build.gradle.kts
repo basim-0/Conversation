@@ -14,6 +14,7 @@ kotlin {
             binaryOption("bundleId", "org.talkdesk.conversation.kit")
             export(project(":auth:api"))
             export(project(":auth:impl"))
+            export(project(":activity:impl"))
             export(libs.androidx.lifecycle.viewmodel)
         }
     }
@@ -22,9 +23,11 @@ kotlin {
         commonMain.dependencies {
             api(project(":auth:api"))
             api(project(":auth:impl"))
+            api(project(":activity:impl"))
             api(libs.androidx.lifecycle.viewmodel)
             implementation(project(":core:network"))
             implementation(project(":core:datastore"))
+            implementation(project(":core:database"))
             implementation(libs.koin.core)
         }
     }

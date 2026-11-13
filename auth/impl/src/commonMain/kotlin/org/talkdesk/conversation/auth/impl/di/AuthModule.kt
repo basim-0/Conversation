@@ -24,14 +24,15 @@ import org.talkdesk.conversation.auth.impl.domain.usecase.LogoutUseCase
 import org.talkdesk.conversation.auth.impl.domain.usecase.RestoreSessionUseCase
 import org.talkdesk.conversation.auth.impl.domain.usecase.StartSignInUseCase
 import org.talkdesk.conversation.auth.impl.presentation.LoginViewModel
+import org.talkdesk.conversation.core.network.ApiBaseUrl
+import org.talkdesk.conversation.core.network.AuthorizedHttpClient
 import org.talkdesk.conversation.core.network.plugins.withBearerRefresh
 
 /** Qualifier of the [DataStore] the host app must provide for auth storage. */
 val AuthDataStore = named("auth.datastore")
 
-private val AuthorizedClient = named("auth.authorizedClient")
-
 /**
+ * Also provides the authenticated client ([AuthorizedHttpClient]) and [ApiBaseUrl] for other features.
  * The host app must provide: `HttpClient` (base, unauthenticated), `DataStore<Preferences>`
  * qualified with [AuthDataStore], `OAuthCredentialsProvider` and `Es256Signer`.
  */
@@ -44,7 +45,7 @@ val authModule = module {
     }
 
     // Authenticated client: bearer header + refresh-on-expired (single-flight, one retry).
-    single<HttpClient>(AuthorizedClient) {
+    single<HttpClient>(AuthorizedHttpClient) {
         val repository = get<AuthRepository>()
         get<HttpClient>().withBearerRefresh {
             currentToken = repository::currentAccessToken
@@ -53,7 +54,15 @@ val authModule = module {
             onError = { if (it.code == AuthConfig.ERROR_MISSING_SCOPES) repository.revoke() }
         }
     }
-    single<AgentAccessChecker> { AgentAccessCheckerImpl(get<HttpClient>(AuthorizedClient), get()) }
+    // Gateway of the signed-in account, for features that call the Talkdesk API.
+    single<ApiBaseUrl> {
+        val storage = get<AuthStorage>()
+        ApiBaseUrl {
+            val gateway = storage.read().regional?.gateway ?: error("No regional gateway: not signed in")
+            "${AuthConfig.PROTOCOL}$gateway"
+        }
+    }
+    single<AgentAccessChecker> { AgentAccessCheckerImpl(get<HttpClient>(AuthorizedHttpClient), get()) }
 
     factory { RestoreSessionUseCase(get()) }
     factory { StartSignInUseCase(get()) }
