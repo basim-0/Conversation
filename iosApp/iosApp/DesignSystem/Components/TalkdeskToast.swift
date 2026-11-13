@@ -123,6 +123,8 @@ struct TalkdeskBanner: View {
     var message: LocalizedStringKey?
     var variant: TalkdeskBannerVariant = .info
     var icon: Image?
+    /// 4 (`radius-sm`) by default; the iOS Activity board rounds its offline banner to 12.
+    var cornerRadius: CGFloat = TalkdeskRadius.sm
 
     var body: some View {
         let (container, content): (Color, Color) = switch variant {
@@ -156,7 +158,7 @@ struct TalkdeskBanner: View {
         }
         .padding(.horizontal, TalkdeskSpacing.s16)
         .padding(.vertical, TalkdeskSpacing.s12)
-        .background(container, in: RoundedRectangle(cornerRadius: TalkdeskRadius.sm))
+        .background(container, in: RoundedRectangle(cornerRadius: cornerRadius))
         .accessibilityElement(children: .combine)
     }
 }

@@ -10,7 +10,52 @@
     "%@.mytalkdesk.com" : {
 
     },
+    "%lld" : {
+
+    },
+    "%lld unread" : {
+
+    },
+    "99+" : {
+
+    },
+    "Abandoned" : {
+
+    },
+    "Account" : {
+
+    },
     "Account name" : {
+
+    },
+    "Active" : {
+
+    },
+    "Activity" : {
+
+    },
+    "All" : {
+
+    },
+    "by %@" : {
+
+    },
+    "by %@ (Me)" : {
+
+    },
+    "Call back" : {
+
+    },
+    "Call back %@" : {
+
+    },
+    "Calls" : {
+
+    },
+    "Calls and conversations will show up here." : {
+
+    },
+    "Calls you miss will show up here, so you can call back." : {
 
     },
     "Can't find your account name?" : {
@@ -19,10 +64,22 @@
     "Cancel" : {
 
     },
+    "Check your connection and try again." : {
+
+    },
     "Check your connection, then tap Continue." : {
 
     },
     "Clear" : {
+
+    },
+    "Clear filters" : {
+
+    },
+    "Coming soon" : {
+
+    },
+    "Contacts" : {
 
     },
     "Continue" : {
@@ -31,19 +88,79 @@
     "Continue to your company's sign-in page." : {
 
     },
+    "Conversations" : {
+
+    },
+    "Couldn't load activity" : {
+
+    },
+    "Email" : {
+
+    },
     "Enter your account name." : {
 
     },
     "Enter your Talkdesk account name. You'll continue to your company's sign-in page." : {
 
     },
+    "Filter" : {
+
+    },
+    "Filtered by %@" : {
+
+    },
     "If you didn't see your company's sign-in page, check that \"%@\" is your account name." : {
+
+    },
+    "Inbound" : {
+
+    },
+    "It updates when you reconnect." : {
+
+    },
+    "Loading activity" : {
+
+    },
+    "Missed" : {
+
+    },
+    "Missed (%lld)" : {
+
+    },
+    "New call" : {
+
+    },
+    "No %@ activity" : {
+
+    },
+    "No activity yet" : {
 
     },
     "No internet connection" : {
 
     },
+    "No matching activity" : {
+
+    },
+    "No missed calls" : {
+
+    },
+    "Not answered" : {
+
+    },
+    "Nothing matches your filter. Clear it to see all activity." : {
+
+    },
     "Opening sign-in…" : {
+
+    },
+    "Outbound" : {
+
+    },
+    "Show" : {
+
+    },
+    "Showing activity from %@. It updates when you reconnect." : {
 
     },
     "Sign in" : {
@@ -61,13 +178,34 @@
     "Signing you in…" : {
 
     },
+    "SMS" : {
+
+    },
     "Talkdesk Conversations" : {
 
     },
     "The first part of your Talkdesk web address" : {
 
     },
+    "This tab isn't available in this version yet." : {
+
+    },
+    "Today" : {
+
+    },
+    "Transfer" : {
+
+    },
+    "Try a different channel, or clear the filters." : {
+
+    },
+    "Try again" : {
+
+    },
     "Try again, or contact your Talkdesk administrator." : {
+
+    },
+    "Unknown contact" : {
 
     },
     "Use a different account" : {
@@ -76,7 +214,19 @@
     "Use only letters, numbers and hyphens, without spaces." : {
 
     },
+    "Voicemails" : {
+
+    },
     "Welcome back" : {
+
+    },
+    "WhatsApp" : {
+
+    },
+    "Yesterday" : {
+
+    },
+    "You're offline" : {
 
     },
     "your-company" : {

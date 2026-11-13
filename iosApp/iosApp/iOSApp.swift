@@ -47,23 +47,11 @@ private struct ConversationRoot: View {
     var body: some View {
         Group {
             if session.isSignedIn {
-                SignedInPlaceholder(onSignOut: session.signOut)
+                HomeView(onSignOut: session.signOut)
             } else {
                 LoginFlowView()
             }
         }
         .task { await session.observe() }
-    }
-}
-
-// TODO: temporary signed-in screen so sign-out can be exercised. Replace with the real home once designed.
-private struct SignedInPlaceholder: View {
-    let onSignOut: () -> Void
-
-    var body: some View {
-        ZStack {
-            TalkdeskColors.bgWindow.ignoresSafeArea()
-            TalkdeskButton("Sign out", action: onSignOut)
-        }
     }
 }
