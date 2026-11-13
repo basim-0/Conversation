@@ -4,6 +4,36 @@
 <dict>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+	<key>OAUTH_US_CLIENT_ID</key>
+	<string>$(OAUTH_US_CLIENT_ID)</string>
+	<key>OAUTH_US_PRIVATE_KEY</key>
+	<string>$(OAUTH_US_PRIVATE_KEY)</string>
+	<key>OAUTH_US_KEY_ID</key>
+	<string>$(OAUTH_US_KEY_ID)</string>
+	<key>OAUTH_CA_CLIENT_ID</key>
+	<string>$(OAUTH_CA_CLIENT_ID)</string>
+	<key>OAUTH_CA_PRIVATE_KEY</key>
+	<string>$(OAUTH_CA_PRIVATE_KEY)</string>
+	<key>OAUTH_CA_KEY_ID</key>
+	<string>$(OAUTH_CA_KEY_ID)</string>
+	<key>OAUTH_EU_CLIENT_ID</key>
+	<string>$(OAUTH_EU_CLIENT_ID)</string>
+	<key>OAUTH_EU_PRIVATE_KEY</key>
+	<string>$(OAUTH_EU_PRIVATE_KEY)</string>
+	<key>OAUTH_EU_KEY_ID</key>
+	<string>$(OAUTH_EU_KEY_ID)</string>
+	<key>OAUTH_AU_CLIENT_ID</key>
+	<string>$(OAUTH_AU_CLIENT_ID)</string>
+	<key>OAUTH_AU_PRIVATE_KEY</key>
+	<string>$(OAUTH_AU_PRIVATE_KEY)</string>
+	<key>OAUTH_AU_KEY_ID</key>
+	<string>$(OAUTH_AU_KEY_ID)</string>
+	<key>OAUTH_UK_CLIENT_ID</key>
+	<string>$(OAUTH_UK_CLIENT_ID)</string>
+	<key>OAUTH_UK_PRIVATE_KEY</key>
+	<string>$(OAUTH_UK_PRIVATE_KEY)</string>
+	<key>OAUTH_UK_KEY_ID</key>
+	<string>$(OAUTH_UK_KEY_ID)</string>
 	<key>UILaunchScreen</key>
 	<dict>
 		<key>UIColorName</key>

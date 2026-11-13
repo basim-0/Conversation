@@ -3,9 +3,9 @@ This is a Kotlin Multiplatform project targeting Android, iOS.
 * [/iosApp](./iosApp/iosApp) contains an iOS application. Even if you’re sharing your UI with Compose Multiplatform,
   you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
 
-* [/sharedLogic](./sharedLogic/src) is for the code that will be shared between app targets in the project.
-  The most important subfolder is [commonMain](./sharedLogic/src/commonMain/kotlin). If preferred, you
-  can add code to the platform-specific folders here too.
+* [/conversation-kit](./conversation-kit) builds the single `ConversationKit` framework iOS imports (it
+  re-exports the shared feature modules). Shared logic itself lives in `core/*` and the feature modules, e.g.
+  [auth](./auth), each as `api` + `impl`.
 
 * [/sharedUI](./sharedUI/src) is for code that will be shared across your Compose Multiplatform applications.
   It contains several subfolders:

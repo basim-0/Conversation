@@ -67,6 +67,8 @@ internal class AuthRepositoryImpl(
             storage.saveAccount(account, regional)
 
             val credentials = credentialsProvider.forRegion(regional.region)
+            // No OAuth client configured for this region (missing build secrets): fail before opening the browser.
+            if (credentials.clientId.isEmpty()) throw AuthError.SignInFailed()
             val pkce = Pkce.generate()
             pending = Pending(regional, pkce)
 

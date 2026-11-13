@@ -25,13 +25,13 @@
     "Clear" : {
 
     },
-    "Click me!" : {
-
-    },
     "Continue" : {
 
     },
     "Continue to your company's sign-in page." : {
+
+    },
+    "Enter your account name." : {
 
     },
     "Enter your Talkdesk account name. You'll continue to your company's sign-in page." : {
@@ -49,6 +49,9 @@
     "Sign in" : {
 
     },
+    "Sign out" : {
+
+    },
     "Sign-in couldn't be completed" : {
 
     },
@@ -56,9 +59,6 @@
 
     },
     "Signing you in…" : {
-
-    },
-    "SwiftUI: %@" : {
 
     },
     "Talkdesk Conversations" : {
@@ -71,6 +71,9 @@
 
     },
     "Use a different account" : {
+
+    },
+    "Use only letters, numbers and hyphens, without spaces." : {
 
     },
     "Welcome back" : {

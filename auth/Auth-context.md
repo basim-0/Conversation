@@ -164,8 +164,9 @@ On session loss, do the same steps best-effort and ignore errors.
 
 ## Implementation status (Android)
 - `core:datastore`: `createDataStore`, per-platform file location. `core:network`: `createHttpClient`, `ApiException`/`apiCall`, `withBearerRefresh` (single-flight refresh + one retry).
-- `auth/api`: `LoginRoute`, `AuthSession`, `SessionState`. `auth/impl`: domain, data, local `MviViewModel`, `LoginViewModel`, `authModule`, `JavaEs256Signer`.
+- `auth/api`: `LoginRoute`, `AuthSession`, `SessionState`. `auth/impl`: domain, data, `LoginViewModel` (plain androidx `ViewModel`, no shared base class), `authModule`, `JavaEs256Signer`.
 - `auth/impl/androidMain/ui/login`: `LoginFlow` (splash, screens, Auth Tab with Custom Tab fallback). There is no `auth/android` module. `androidApp`: Application + Koin, credentials from BuildConfig, root `NavDisplay`.
+- **iOS** (same shared logic): `:conversation-kit` builds the `ConversationKit` framework (SKIE). `ConversationBootstrap.start(...)` starts Koin (`networkIosModule`, `authIosModule`, `authModule`). Swift provides `CryptoKitEs256Signer` (raw R||S, verified against the production keys) and `BundleOAuthCredentials` (from `Info.plist`, filled by `Secrets.xcconfig`). `WebAuthenticator` wraps `ASWebAuthenticationSession`; redirect -> `RedirectReceived`, cancel -> `BrowserClosed`. `LoginFlowView` mirrors Android's `LoginFlow`; `ConversationRoot` follows `AuthSession.state`. Setup: run `iosApp/scripts/generate-secrets.sh` once (AU/UK stay empty like Android).
 - The host app provides to `authModule`: base `HttpClient`, `DataStore<Preferences>` qualified `AuthDataStore`, `OAuthCredentialsProvider`, `Es256Signer`.
 - Temporary: a sign-out button as the signed-in screen; "not whitelisted" shows the generic sign-in-failed banner.
 - Errors use a feature-local `AuthError` because `AppError`/`resultCatching` do not exist yet.

@@ -5,7 +5,7 @@
   - Android: **Jetpack Compose** (androidx, Compose BOM) in `androidMain` of each feature's `<name>/impl` and in Android-only modules (`core:designsystem`, `core:navigation`, `androidApp`). No Compose Multiplatform, and never Compose in `commonMain`/`iosMain`.
   - iOS: **SwiftUI** in `iosApp/iosApp/` (`<Name>/`, `DesignSystem/`, `Navigation/`), consuming the shared ViewModels through the `ConversationKit` framework (SKIE for Flow/sealed/suspend interop).
 - Target layout: `core/*` + one top-level folder per feature (`<name>/api|impl`, e.g. `auth/`), shared composition root + iOS umbrella framework in `:conversation-kit`, Android composition root in `androidApp`, convention plugins in `build-logic`.
-- **Current state:** `build-logic` exists; `sharedLogic` builds the `SharedLogic` framework that iOS imports. `core:designsystem`, `core:ui` and `auth/` exist; other `core/*` modules and `conversation-kit` do not exist yet. Never assume a class, task or module exists: look first. If something is missing, say so and propose it; don't silently create it.
+- **Current state:** `build-logic` exists; `:conversation-kit` builds the `ConversationKit` framework that iOS imports (SKIE enabled); the old `sharedLogic` template module is gone. `core:designsystem`, `core:ui`, `core:network`, `core:datastore`, `conversation-kit` and `auth/` exist; other `core/*` modules do not exist yet. Never assume a class, task or module exists: look first. If something is missing, say so and propose it; don't silently create it.
 - **Single environment**: no STG/QA/PROD, flavors or environment enum. Base URL from build config; logging only in debug builds.
 - Presentation is **MVI** by convention, not by base class: each ViewModel owns its data-class `State` (one `StateFlow`), `onIntent(Intent)` and `Effect` flow, and decides which of those it needs. There is no shared `MviViewModel`. Each platform renders `State` and sends `Intent`s. **Never use Circuit.**
 - Navigation: routes are `@Serializable` `NavKey` data in `<name>:api` (shared). Android: Navigation 3 `NavDisplay`. iOS: SwiftUI `NavigationStack` driven by the same routes.
@@ -66,11 +66,12 @@
 - Document in the module's Koin module KDoc what the host must still provide.
 
 ### iOS umbrella framework
-- iOS consumes exactly ONE Kotlin framework, `ConversationKit`, produced by `:conversation-kit` (`conversation-kit/`). Swift uses `import ConversationKit`. Until it exists, `:sharedLogic` produces the only framework (`SharedLogic`).
+- iOS consumes exactly ONE Kotlin framework, `ConversationKit`, produced by `:conversation-kit` (`conversation-kit/`). Swift uses `import ConversationKit`. SKIE (0.10.16) gives Swift native `async`/`AsyncSequence` for `suspend`/`Flow`, and exhaustive `switch` over sealed types (`onEnum(of:)`).
 - Never produce a framework per feature or per core module. That duplicates the Kotlin runtime and creates incompatible copies of the same types in Swift.
 - `export()` only the modules whose classes Swift uses by name: ViewModels, `State`/`Intent`/`Effect`, models, and interfaces Swift implements. Every exported module must be an `api(...)` dependency. Everything else stays `implementation(...)`.
 - When adding a feature, also add it to `:conversation-kit`'s dependencies, export it if Swift needs it, and register its ViewModels in the iOS wiring.
-- iOS does not clear ViewModels automatically. Every SwiftUI screen must own a ViewModel scope that clears its ViewModelStore on deinit. TODO: no pattern exists yet; propose one in `:conversation-kit` the first time it's needed.
+- iOS does not clear ViewModels automatically. Every SwiftUI screen owns its ViewModel through `ScopedViewModel<VM>` (`:conversation-kit`, `ConversationBootstrap.makeLoginViewModel()` is the example): keep it in an `ObservableObject` and call `clear()` in `deinit`, which cancels the ViewModel's coroutines.
+- iOS composition root: `iOSApp.init()` calls `ConversationBootstrap.shared.start(es256Signer:credentials:)`, which starts Koin with the iOS modules (`networkIosModule`, `authIosModule`) plus the Swift-implemented `Es256Signer` (CryptoKit) and `OAuthCredentialsProvider`. iOS OAuth credentials come from the git-ignored `iosApp/Configuration/Secrets.xcconfig` -> `Info.plist`; generate it with `iosApp/scripts/generate-secrets.sh` (same `AGENT_*_PRODUCTION_*` properties as Android). Never commit it.
 
 ### Build logic
 - Use the existing convention plugins (`build-logic/convention`) for every module:
@@ -80,7 +81,7 @@
   - Android-only library: `conversation.android.library` / `conversation.android.library.compose`
   - Android application (includes activity-compose, Navigation 3, lifecycle-compose-runtime, Koin): `conversation.android.application.compose` (builds on `conversation.android.application`)
 - Don't re-declare in a module build file anything these plugins already add (own `api`, designsystem, Compose, Koin). Add shared dependencies to the plugin instead.
-- `androidApp` wires its modules (`sharedLogic`, `core:*`, `auth:*`) from `AndroidApplicationComposeConventionPlugin` (`AppModules`). When adding a feature or core module, add it there, not in `androidApp/build.gradle.kts`.
+- `androidApp` wires its modules (`core:*`, `auth:*`) from `AndroidApplicationComposeConventionPlugin` (`AppModules`). When adding a feature or core module, add it there, not in `androidApp/build.gradle.kts`.
 - Don't hand-write `kotlin {}` or `android {}` configuration that a convention plugin already provides.
 - Don't create new convention plugins or change existing ones without asking. If no plugin fits, explain what's missing and propose a change.
 

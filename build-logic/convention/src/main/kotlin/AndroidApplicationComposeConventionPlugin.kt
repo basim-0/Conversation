@@ -12,7 +12,6 @@ import org.talkdesk.conversation.buildlogic.configureAndroidCompose
  * not in `androidApp/build.gradle.kts`.
  */
 private val AppModules = listOf(
-    ":sharedLogic",
     ":core:designsystem",
     ":core:network",
     ":core:datastore",

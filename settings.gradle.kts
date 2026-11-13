@@ -29,7 +29,7 @@ dependencyResolutionManagement {
 }
 
 include(":androidApp")
-include(":sharedLogic")
+include(":conversation-kit")
 include(":core:designsystem")
 include(":core:ui")
 include(":core:datastore")

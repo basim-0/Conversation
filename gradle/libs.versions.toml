@@ -9,6 +9,7 @@ androidx-browser = "1.10.0"
 androidx-datastore = "1.3.0"
 androidx-lifecycle = "2.11.0"
 koin = "4.2.2"
+skie = "0.10.16"
 kotlinx-coroutines = "1.11.0"
 kotlinx-serialization = "1.13.0"
 ktor = "3.6.1"
@@ -64,6 +65,7 @@ androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidMultiplatformLibrary = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+skie = { id = "co.touchlab.skie", version.ref = "skie" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 
 # Convention plugins from build-logic (resolved via includeBuild, no version)

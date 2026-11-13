@@ -5,3 +5,6 @@ PRODUCT_BUNDLE_IDENTIFIER=org.talkdesk.conversation.Conversation$(TEAM_ID)
 
 CURRENT_PROJECT_VERSION=1
 MARKETING_VERSION=1.0
+
+// Regional OAuth clients (never committed). Generate with iosApp/scripts/generate-secrets.sh
+#include? "Secrets.xcconfig"

@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// Inline message above the account field (iOS has no snackbar pattern).
-enum LoginBanner {
+enum LoginBannerStyle {
     /// Info: the sign-in sheet closed without a callback (i07).
     case signInDidNotFinish
     /// Error: SSO or session creation failed.
@@ -18,7 +18,7 @@ enum LoginBanner {
 struct AccountNameView: View {
     @Binding var accountName: String
     var errorText: LocalizedStringKey?
-    var banner: LoginBanner?
+    var banner: LoginBannerStyle?
     var isOpeningSignIn: Bool = false
     var showsHelpLink: Bool = true
     let onContinue: () -> Void
@@ -76,7 +76,7 @@ struct AccountNameView: View {
     }
 
     @ViewBuilder
-    private func bannerView(_ banner: LoginBanner) -> some View {
+    private func bannerView(_ banner: LoginBannerStyle) -> some View {
         switch banner {
         case .signInDidNotFinish:
             TalkdeskBanner(
@@ -106,7 +106,7 @@ struct AccountNameView: View {
 private struct AccountNamePreview: View {
     @State var accountName: String
     var errorText: LocalizedStringKey?
-    var banner: LoginBanner?
+    var banner: LoginBannerStyle?
     var isOpeningSignIn = false
     var showsHelpLink = true
 
