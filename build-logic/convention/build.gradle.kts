@@ -50,10 +50,6 @@ gradlePlugin {
             id = libs.plugins.conversation.android.library.compose.get().pluginId
             implementationClass = "AndroidLibraryComposeConventionPlugin"
         }
-        register("androidFeature") {
-            id = libs.plugins.conversation.android.feature.get().pluginId
-            implementationClass = "AndroidFeatureConventionPlugin"
-        }
         register("kmpLibrary") {
             id = libs.plugins.conversation.kmp.library.get().pluginId
             implementationClass = "KmpLibraryConventionPlugin"

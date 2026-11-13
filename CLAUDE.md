@@ -2,20 +2,21 @@
 
 - Kotlin Multiplatform for everything **below the UI**: domain, data, persistence, networking, DI and MVI ViewModels are shared in `commonMain`. Package root: `org.talkdesk.conversation`.
 - **UI is native per platform — never shared:**
-  - Android: **Jetpack Compose** (androidx, Compose BOM) in Android-only modules (`<name>/android`, `core:designsystem`, `core:navigation`, `androidApp`). No Compose Multiplatform, no Compose in any KMP module.
+  - Android: **Jetpack Compose** (androidx, Compose BOM) in `androidMain` of each feature's `<name>/impl` and in Android-only modules (`core:designsystem`, `core:navigation`, `androidApp`). No Compose Multiplatform, and never Compose in `commonMain`/`iosMain`.
   - iOS: **SwiftUI** in `iosApp/iosApp/` (`<Name>/`, `DesignSystem/`, `Navigation/`), consuming the shared ViewModels through the `ConversationKit` framework (SKIE for Flow/sealed/suspend interop).
-- Target layout: `core/*` + one top-level folder per feature (`<name>/api|impl|android`, e.g. `auth/`), shared composition root + iOS umbrella framework in `:conversation-kit`, Android composition root in `androidApp`, convention plugins in `build-logic`.
-- **Current state:** `build-logic` exists; the app modules are still the wizard template (`sharedLogic` builds the `SharedLogic` framework that iOS imports, plus `sharedUI`). `core:designsystem` and `auth/` exist; other `core/*` modules and `conversation-kit` do not exist yet. Never assume a class, task or module exists: look first. If something is missing, say so and propose it; don't silently create it.
+- Target layout: `core/*` + one top-level folder per feature (`<name>/api|impl`, e.g. `auth/`), shared composition root + iOS umbrella framework in `:conversation-kit`, Android composition root in `androidApp`, convention plugins in `build-logic`.
+- **Current state:** `build-logic` exists; `sharedLogic` builds the `SharedLogic` framework that iOS imports. `core:designsystem`, `core:ui` and `auth/` exist; other `core/*` modules and `conversation-kit` do not exist yet. Never assume a class, task or module exists: look first. If something is missing, say so and propose it; don't silently create it.
 - **Single environment**: no STG/QA/PROD, flavors or environment enum. Base URL from build config; logging only in debug builds.
-- Presentation is **MVI**: shared `MviViewModel` + data-class `State` + `onIntent(Intent)` + `Effect` flow; each platform renders `State` and sends `Intent`s. **Never use Circuit.**
+- Presentation is **MVI** by convention, not by base class: each ViewModel owns its data-class `State` (one `StateFlow`), `onIntent(Intent)` and `Effect` flow, and decides which of those it needs. There is no shared `MviViewModel`. Each platform renders `State` and sends `Intent`s. **Never use Circuit.**
 - Navigation: routes are `@Serializable` `NavKey` data in `<name>:api` (shared). Android: Navigation 3 `NavDisplay`. iOS: SwiftUI `NavigationStack` driven by the same routes.
-- DI: Koin. Network: Ktor (`core:network`). Persistence: Room (`core:database`) + DataStore (`core:datastore`, settings only). No SQLDelight.
-- Dependency rule: `ui → domain ← data`; domain is pure Kotlin. No `impl → impl` / `android → android` between features.
+- DI: Koin. Network: Ktor (`core:network`). Persistence: Room (`core:database`) + DataStore (`core:datastore`: settings and the auth session; tokens are stored unencrypted by decision, pending a security review). No SQLDelight.
+- Dependency rule: `ui → domain ← data`; domain is pure Kotlin. No `impl → impl` between features.
 - **Offline-first**: the local DB is the single source of truth. UI reads only `Flow`s from it; API calls only write into it. No cache policies.
 - Errors: `resultCatching`/`dataCatching`, never `runCatching`/`mapCatching`. Typed `AppError`; user text per platform (Android string resources, iOS String Catalog).
 - In KMP modules everything lives in `commonMain`; `androidMain`/`iosMain` hold only thin expect/actual and platform glue.
 - Versions only in `gradle/libs.versions.toml`. Build config lives in `build-logic` convention plugins (`conversation.*`); module build files hold only plugin aliases + dependencies.
-- Verify: `./gradlew check` (guards + tests), `./gradlew :androidApp:assembleDebug`, and for iOS `xcodebuild -project iosApp/iosApp.xcodeproj -scheme iosApp -destination 'generic/platform=iOS Simulator' build`.
+- **STRICT RULE: no tests.** This is a hackathon project. Never write, add or keep tests of any kind (unit, instrumented, UI, screenshot, Koin/graph checks) or test-only dependencies, source sets (`commonTest`, `androidHostTest`, `androidTest`, `iosTest`) or fakes. Verify by building only. If asked to add tests, remind the user of this rule first.
+- Verify: `./gradlew check` (guards), `./gradlew :androidApp:assembleDebug`, and for iOS `xcodebuild -project iosApp/iosApp.xcodeproj -scheme iosApp -destination 'generic/platform=iOS Simulator' build`.
 
 ## Design system
 - **Source of truth:** the "Talkdesk Agent Mobile" design system (Cobalt palette): https://claude.ai/artifact/GaXk1DBHBDar5w1R7Yn6P7. Read it (Artifact tool, `read`, starting with `project/README.md`, then `project/tokens.json` and `project/components/<Name>/README.md`) before any UI work. Never guess its values.
@@ -33,22 +34,23 @@
 ## KMP architecture
 
 ### MVI state
+- Android UI collects one-shot effects with `CollectEffects` from `core:ui` (lifecycle-aware via `repeatOnLifecycle`), never with a bare `LaunchedEffect { flow.collect {} }`. State uses `collectAsStateWithLifecycle`. Put shared Android UI helpers like this in `core:ui`.
 - A ViewModel exposes its `State` as one `StateFlow`. `State` holds only data: no Compose or SwiftUI types, colors or string resources.
 
 ### What goes in each module
 - `<name>/api` (KMP): `commonMain` only. Public interfaces, shared models and `NavKey` routes. Keep it small, with no implementations.
 - `<name>/impl` (KMP):
   - `commonMain`: ViewModels, `State`/`Intent`/`Effect`, use cases, repository implementations.
-  - `androidMain`: Android-only implementations of interfaces. Never Compose.
+  - `androidMain`: Android-only implementations of interfaces, and the feature's Jetpack Compose screens (`ui/`, string resources in `src/androidMain/res`). The screens render the feature's ViewModel `State` and send `Intent`s; no business logic.
   - `iosMain`: only when Kotlin code needs an iOS API. SwiftUI screens live in `iosApp/`, never in `iosMain`.
-- `<name>/android` (Android-only): Compose screens that render the feature's ViewModel.
+- There is no `<name>/android` module: a feature is `api` + `impl`.
 - Only create source set folders that contain code.
 - Compiled module names must be unique (many modules are named `api`/`impl`, which clashes in `.kotlin_module` on Android and in the klib `unique_name` on iOS). TODO: the convention plugins give each module a unique Android namespace but don't set the Kotlin module name or klib unique name. Flag this instead of adding a per-module workaround.
 
 ### Dependency rules
 - `impl` may depend on its own `api`, other features' `api`, and `core` modules.
-- `android` may depend on its own `impl`, other features' `api`, and Android `core` modules.
-- Only `androidApp`, `:conversation-kit` and a feature's own `android` module depend on an `impl`. `androidApp` and `:conversation-kit` wire implementations to interfaces.
+- Only `androidApp` and `:conversation-kit` depend on an `impl`. They wire implementations to interfaces.
+- `impl/androidMain` may depend on Android-only `core` modules (`core:designsystem`, `core:ui`; both added by the `kmp.feature.impl` plugin).
 
 ### Where platform code goes
 - Used by more than one feature: a `core` module (`androidMain` + `iosMain`).
@@ -56,6 +58,12 @@
 - Needed by only one feature's ViewModel: an interface in that feature's `impl/commonMain`, with implementations in its `androidMain`/`iosMain`. Move it to `core` as soon as a second feature needs it.
 - Swift-only or much simpler in Swift (CallKit, PushKit, AVAudioSession, async APIs): declare a Kotlin interface, implement it in Swift inside `iosApp/`, and inject it at app startup. Prefer callbacks over `suspend` in interfaces that Swift implements.
 - Needed only by the UI (haptics, share sheet, opening settings): put it directly in Compose or SwiftUI.
+
+### Providing dependencies (Koin)
+- A module provides as many of its own dependencies as it can. The host (`androidApp`, `:conversation-kit`) provides only what the module cannot know: build-time values (e.g. `BuildConfig` credentials) and Swift-implemented interfaces.
+- Each module exposes its own Koin `Module` for its bindings (`authModule`, `networkAndroidModule`, `authAndroidModule`, ...). Platform bindings live in that module's `androidMain`/`iosMain`; shared bindings in `commonMain`. The host only lists these modules.
+- Don't create a module's `HttpClient`, `DataStore`, signer, database or similar in the app. If the app currently builds one, move it to the module that owns it (use `androidContext()` for Android APIs instead of app `BuildConfig`).
+- Document in the module's Koin module KDoc what the host must still provide.
 
 ### iOS umbrella framework
 - iOS consumes exactly ONE Kotlin framework, `ConversationKit`, produced by `:conversation-kit` (`conversation-kit/`). Swift uses `import ConversationKit`. Until it exists, `:sharedLogic` produces the only framework (`SharedLogic`).
@@ -67,11 +75,12 @@
 ### Build logic
 - Use the existing convention plugins (`build-logic/convention`) for every module:
   - KMP library (`core/*`, `:conversation-kit`): `conversation.kmp.library`
-  - Feature api: `conversation.kmp.feature.api`
-  - Feature impl: `conversation.kmp.feature.impl`
-  - Feature android UI: `conversation.android.feature`
+  - Feature api (includes `navigation3-runtime`): `conversation.kmp.feature.api`
+  - Feature impl (includes Compose + Android resources in `androidMain`, its own `:<feature>:api` and `:core:designsystem`): `conversation.kmp.feature.impl`
   - Android-only library: `conversation.android.library` / `conversation.android.library.compose`
-  - Android application: `conversation.android.application.compose` (builds on `conversation.android.application`)
+  - Android application (includes activity-compose, Navigation 3, lifecycle-compose-runtime, Koin): `conversation.android.application.compose` (builds on `conversation.android.application`)
+- Don't re-declare in a module build file anything these plugins already add (own `api`, designsystem, Compose, Koin). Add shared dependencies to the plugin instead.
+- `androidApp` wires its modules (`sharedLogic`, `core:*`, `auth:*`) from `AndroidApplicationComposeConventionPlugin` (`AppModules`). When adding a feature or core module, add it there, not in `androidApp/build.gradle.kts`.
 - Don't hand-write `kotlin {}` or `android {}` configuration that a convention plugin already provides.
 - Don't create new convention plugins or change existing ones without asking. If no plugin fits, explain what's missing and propose a change.
 

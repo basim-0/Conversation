@@ -10,7 +10,7 @@ This project keeps build configuration in convention plugins (`build-logic/conve
 ## Step 1 — Read before you edit
 
 1. Read `build-logic/convention/src/main/kotlin/` (plugin classes + `org/talkdesk/conversation/buildlogic/` helpers) and `gradle/libs.versions.toml`. Don't rely on memory of what the plugins do; they change.
-2. Identify which plugin(s) the target module applies. Current set: `kmp.library`, `kmp.feature.api`, `kmp.feature.impl`, `android.library`, `android.library.compose`, `android.feature`, `android.application`, `android.application.compose`.
+2. Identify which plugin(s) the target module applies. Current set: `kmp.library`, `kmp.feature.api`, `kmp.feature.impl` (also Compose + Android resources in `androidMain`), `android.library`, `android.library.compose`, `android.feature` (currently unused by features), `android.application`, `android.application.compose`.
 
 ## Step 2 — Classify the change
 
@@ -35,7 +35,7 @@ If the change is clearly module-specific, don't ask — just put it in the modul
 
 - Catalog first (version, library, plugin alias), then the plugin or module.
 - Plugin dependencies are injected via `libs.findLibrary("alias-name")`; the alias uses dashes in the lookup (`androidx-compose-ui`).
-- Android UI deps stay androidx + Compose BOM (no Compose Multiplatform). KMP modules hold no UI.
+- Android UI deps stay androidx + Compose BOM (no Compose Multiplatform). KMP modules hold no UI, except a feature `impl`'s `androidMain` (Compose screens), which `kmp.feature.impl` configures.
 - Don't add project dependencies (`project(":core:...")`) to plugins; modules own their wiring.
 - A new plugin needs: the class in `build-logic/convention/src/main/kotlin/`, a `register(...)` entry in `convention/build.gradle.kts`, and an alias in the catalog `[plugins]` (parent aliases that have children need `.asProvider()` in the register block).
 - Before a module overrides something a plugin sets, consider whether the plugin default is wrong instead.

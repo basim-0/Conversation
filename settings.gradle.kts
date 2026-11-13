@@ -30,8 +30,9 @@ dependencyResolutionManagement {
 
 include(":androidApp")
 include(":sharedLogic")
-include(":sharedUI")
 include(":core:designsystem")
+include(":core:ui")
+include(":core:datastore")
+include(":core:network")
 include(":auth:api")
 include(":auth:impl")
-include(":auth:android")

@@ -33,16 +33,11 @@ class KmpLibraryConventionPlugin : Plugin<Project> {
                     compileSdk = compileSdkVersion
                     minSdk = minSdkVersion
                     compilerOptions.jvmTarget.set(AppJvmTarget)
-                    withHostTest { }
                 }
 
                 sourceSets.apply {
                     commonMain.dependencies {
                         implementation(libs.findLibrary("kotlinx-coroutines-core").get())
-                    }
-                    commonTest.dependencies {
-                        implementation(libs.findLibrary("kotlin-test").get())
-                        implementation(libs.findLibrary("kotlinx-coroutines-test").get())
                     }
                 }
             }

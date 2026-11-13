@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -88,6 +89,8 @@ data class TalkdeskToastVisuals(
     override val duration: SnackbarDuration =
         if (actionLabel == null) SnackbarDuration.Short else SnackbarDuration.Long,
     override val withDismissAction: Boolean = false,
+    /** Overrides the variant's default icon. */
+    val icon: ImageVector? = null,
 ) : SnackbarVisuals
 
 /** Shows a Talkdesk toast in the [TalkdeskSnackbarHost] that observes this state. */
@@ -95,19 +98,36 @@ suspend fun SnackbarHostState.showTalkdeskToast(
     message: String,
     variant: TalkdeskToastVariant = TalkdeskToastVariant.Neutral,
     actionLabel: String? = null,
-): SnackbarResult = showSnackbar(TalkdeskToastVisuals(message, variant, actionLabel))
+    icon: ImageVector? = null,
+    duration: SnackbarDuration = if (actionLabel == null) SnackbarDuration.Short else SnackbarDuration.Long,
+): SnackbarResult = showSnackbar(
+    TalkdeskToastVisuals(message, variant, actionLabel, duration = duration, icon = icon),
+)
 
-/** A [SnackbarHost] that renders every snackbar as a [TalkdeskToast]. Place it in a Scaffold's `snackbarHost`. */
+/**
+ * A [SnackbarHost] that renders every snackbar as a [TalkdeskToast], full width up to the toast's
+ * 360dp maximum. Place it in a Scaffold's `snackbarHost`, or align it in a Box. [contentPadding] is the
+ * space around the toast; apply window insets through [modifier] when it sits at a screen edge.
+ */
 @Composable
-fun TalkdeskSnackbarHost(hostState: SnackbarHostState, modifier: Modifier = Modifier) {
+fun TalkdeskSnackbarHost(
+    hostState: SnackbarHostState,
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(16.dp),
+) {
     SnackbarHost(hostState, modifier) { data ->
         val visuals = data.visuals
+        val toast = visuals as? TalkdeskToastVisuals
+        val variant = toast?.variant ?: TalkdeskToastVariant.Neutral
         TalkdeskToast(
             message = visuals.message,
-            variant = (visuals as? TalkdeskToastVisuals)?.variant ?: TalkdeskToastVariant.Neutral,
+            variant = variant,
+            icon = toast?.icon ?: variant.defaultIcon(),
             actionLabel = visuals.actionLabel,
             onAction = data::performAction,
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier
+                .padding(contentPadding)
+                .fillMaxWidth(),
         )
     }
 }

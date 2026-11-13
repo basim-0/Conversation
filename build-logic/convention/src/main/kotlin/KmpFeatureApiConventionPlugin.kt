@@ -18,6 +18,7 @@ class KmpFeatureApiConventionPlugin : Plugin<Project> {
             extensions.configure<KotlinMultiplatformExtension> {
                 sourceSets.commonMain.dependencies {
                     api(libs.findLibrary("kotlinx-serialization-core").get())
+                    api(libs.findLibrary("androidx-navigation3-runtime").get())
                 }
             }
         }
