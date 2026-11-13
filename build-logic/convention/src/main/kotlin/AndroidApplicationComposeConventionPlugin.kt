@@ -17,6 +17,10 @@ private val AppModules = listOf(
     ":core:datastore",
     ":auth:api",
     ":auth:impl",
+    ":activity:api",
+    ":activity:impl",
+    ":home:api",
+    ":home:impl",
 )
 
 /** `conversation.android.application.compose` — Jetpack Compose on top of the application plugin. */

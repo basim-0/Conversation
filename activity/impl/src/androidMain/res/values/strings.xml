@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Activity -->
+    <string name="activity_title">Activity</string>
+    <string name="activity_tab_all">All</string>
+    <string name="activity_tab_missed">Missed</string>
+    <string name="activity_filter_group">Filter by channel</string>
+    <string name="activity_channel_calls">Calls</string>
+    <string name="activity_channel_sms">SMS</string>
+    <string name="activity_channel_whatsapp">WhatsApp</string>
+    <string name="activity_channel_email">Email</string>
+    <string name="activity_day_today">Today</string>
+    <string name="activity_day_yesterday">Yesterday</string>
+    <string name="activity_new_call">New call</string>
+    <string name="activity_loading">Loading activity</string>
+
+    <!-- Activity rows -->
+    <string name="activity_kind_inbound">Inbound</string>
+    <string name="activity_kind_outbound">Outbound</string>
+    <string name="activity_kind_missed">Missed</string>
+    <string name="activity_kind_abandoned">Abandoned</string>
+    <string name="activity_kind_sms">SMS</string>
+    <string name="activity_kind_whatsapp">WhatsApp</string>
+    <string name="activity_kind_email">Email</string>
+    <string name="activity_subline">%1$s · %2$s</string>
+    <string name="activity_call_back">Call back %1$s</string>
+    <string name="activity_row_description">%1$s, %2$s, %3$s, %4$s</string>
+    <plurals name="activity_unread">
+        <item quantity="one">%1$d unread</item>
+        <item quantity="other">%1$d unread</item>
+    </plurals>
+
+    <!-- Activity: offline banner -->
+    <string name="activity_offline_title">You\'re offline</string>
+    <string name="activity_offline_message_cached">Showing activity from %1$s. It updates when you reconnect.</string>
+    <string name="activity_offline_message">It updates when you reconnect.</string>
+
+    <!-- Activity: empty and error states -->
+    <string name="activity_empty_title">No activity yet</string>
+    <string name="activity_empty_body">Calls and conversations will show up here.</string>
+    <string name="activity_empty_missed_title">No missed calls</string>
+    <string name="activity_empty_missed_body">Calls you miss will show up here, so you can call back.</string>
+    <string name="activity_empty_channel_title">No %1$s activity</string>
+    <string name="activity_empty_filtered_title">No matching activity</string>
+    <string name="activity_empty_filtered_body">Try a different channel, or clear the filters.</string>
+    <string name="activity_clear_filters">Clear filters</string>
+    <string name="activity_error_title">Couldn\'t load activity</string>
+    <string name="activity_error_body">Check your connection and try again.</string>
+    <string name="activity_retry">Try again</string>
+</resources>
