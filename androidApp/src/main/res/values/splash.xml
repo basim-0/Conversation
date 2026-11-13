@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      System splash colours. They mirror design tokens (TalkdeskColors): action-primary and
+      text-on-brand, which are the same in light and dark themes. The splash stays action-primary
+      in dark mode, as the splash board specifies. Update them if the tokens change.
+    -->
+    <color name="splash_background">#FF5405BD</color>
+    <color name="splash_mark">#FFFFFFFF</color>
+
+    <!-- App theme after the splash; the UI is Compose and draws its own background. -->
+    <style name="Theme.Conversation" parent="@android:style/Theme.Material.Light.NoActionBar" />
+
+    <!-- Launch theme: action-primary background with the app mark, handed off to SplashTransition. -->
+    <style name="Theme.Conversation.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/splash_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_mark</item>
+        <item name="postSplashScreenTheme">@style/Theme.Conversation</item>
+    </style>
+</resources>

@@ -1,6 +1,15 @@
 package org.talkdesk.conversation.core.designsystem.component
 
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
+import androidx.compose.ui.semantics.ProgressBarRangeInfo
+import androidx.compose.ui.semantics.progressBarRangeInfo
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -66,6 +75,10 @@ enum class TalkdeskButtonSize { Default, Small }
 /**
  * Text button for every non-call action. Height 48 (small: 36), radius `radius-sm`, `body-strong`
  * label (sentence case, no full stop). Shows a 2dp `border-focus` ring at a 2dp offset when focused.
+ *
+ * @param loading shows an 18dp spinner before [text] (use a progress label such as
+ *   "Opening sign-in…"), keeps the pressed fill and the same footprint, and ignores taps. The
+ *   spinner is static when the system has animations turned off.
  */
 @Composable
 fun TalkdeskButton(
@@ -77,13 +90,14 @@ fun TalkdeskButton(
     enabled: Boolean = true,
     fullWidth: Boolean = false,
     leadingIcon: ImageVector? = null,
+    loading: Boolean = false,
     interactionSource: MutableInteractionSource? = null,
 ) {
     val source = interactionSource ?: remember { MutableInteractionSource() }
     val pressed by source.collectIsPressedAsState()
     val focused by source.collectIsFocusedAsState()
     val colors = TalkdeskTheme.colors
-    val style = buttonStyle(variant, colors, enabled, pressed)
+    val style = buttonStyle(variant, colors, enabled, pressed || loading)
     val shape = TalkdeskTheme.shapes.sm
     val focusColor = colors.borderFocus
     val ghostLike = variant in GhostVariants
@@ -107,15 +121,17 @@ fun TalkdeskButton(
             .clickable(
                 interactionSource = source,
                 indication = null,
-                enabled = enabled,
+                enabled = enabled && !loading,
                 role = Role.Button,
                 onClick = onClick,
             )
             .padding(PaddingValues(horizontal = horizontalPadding)),
-        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+        horizontalArrangement = Arrangement.spacedBy(if (loading) 12.dp else 8.dp, Alignment.CenterHorizontally),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        if (leadingIcon != null) {
+        if (loading) {
+            ButtonSpinner(style.content)
+        } else if (leadingIcon != null) {
             Icon(leadingIcon, contentDescription = null, tint = style.content, modifier = Modifier.size(20.dp))
         }
         Text(text = text, style = textStyle, color = style.content, maxLines = 1)
@@ -186,6 +202,33 @@ private fun buttonStyle(
     }
 }
 
+/** 18dp spinner for the button loading state: a 2dp ring at 40% of [color] with a rotating [color] quarter. */
+@Composable
+private fun ButtonSpinner(color: Color) {
+    val reduceMotion = rememberReduceMotion()
+    val rotation = if (reduceMotion) {
+        0f
+    } else {
+        rememberInfiniteTransition(label = "buttonSpinner").animateFloat(
+            initialValue = 0f,
+            targetValue = 360f,
+            animationSpec = infiniteRepeatable(tween(800, easing = LinearEasing)),
+            label = "rotation",
+        ).value
+    }
+    Canvas(
+        Modifier
+            .size(18.dp)
+            .semantics { progressBarRangeInfo = ProgressBarRangeInfo.Indeterminate },
+    ) {
+        val stroke = 2.dp.toPx()
+        val inset = stroke / 2
+        val arcSize = Size(size.width - stroke, size.height - stroke)
+        drawArc(color.copy(alpha = 0.4f), 0f, 360f, false, Offset(inset, inset), arcSize, style = Stroke(stroke))
+        drawArc(color, rotation - 135f, 90f, false, Offset(inset, inset), arcSize, style = Stroke(stroke))
+    }
+}
+
 /** Draws a rounded focus ring outside the bounds, like CSS `outline` + `outline-offset`. */
 internal fun Modifier.focusRing(
     focused: Boolean,
@@ -222,6 +265,7 @@ private fun TalkdeskButtonPreview() = PreviewSurface {
             TalkdeskButton("Small", {}, size = TalkdeskButtonSize.Small)
         }
         TalkdeskButton("Continue", {}, fullWidth = true)
+        TalkdeskButton("Opening sign-in…", {}, fullWidth = true, loading = true)
         TalkdeskLink("Show more", {})
     }
 }

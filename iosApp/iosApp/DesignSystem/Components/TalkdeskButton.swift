@@ -30,9 +30,11 @@ struct TalkdeskButtonStyle: ButtonStyle {
     var variant: TalkdeskButtonVariant = .primary
     var size: TalkdeskButtonSize = .regular
     var fullWidth: Bool = false
+    /// Keeps the pressed fill while the button shows its loading spinner.
+    var isLoading: Bool = false
 
     func makeBody(configuration: Configuration) -> some View {
-        StyledBody(configuration: configuration, variant: variant, size: size, fullWidth: fullWidth)
+        StyledBody(configuration: configuration, variant: variant, size: size, fullWidth: fullWidth, isLoading: isLoading)
     }
 
     private struct StyledBody: View {
@@ -40,6 +42,7 @@ struct TalkdeskButtonStyle: ButtonStyle {
         let variant: TalkdeskButtonVariant
         let size: TalkdeskButtonSize
         let fullWidth: Bool
+        let isLoading: Bool
         @Environment(\.isEnabled) private var isEnabled
 
         var body: some View {
@@ -64,7 +67,7 @@ struct TalkdeskButtonStyle: ButtonStyle {
         }
 
         private var resolvedColors: (container: Color, content: Color, border: Color?) {
-            let pressed = configuration.isPressed
+            let pressed = configuration.isPressed || isLoading
             switch variant {
             case .primary:
                 if !isEnabled { return (TalkdeskColors.actionPrimaryDisabled, TalkdeskColors.textOnDisabled, nil) }
@@ -94,19 +97,25 @@ extension ButtonStyle where Self == TalkdeskButtonStyle {
     static func talkdesk(
         _ variant: TalkdeskButtonVariant = .primary,
         size: TalkdeskButtonSize = .regular,
-        fullWidth: Bool = false
+        fullWidth: Bool = false,
+        isLoading: Bool = false
     ) -> TalkdeskButtonStyle {
-        TalkdeskButtonStyle(variant: variant, size: size, fullWidth: fullWidth)
+        TalkdeskButtonStyle(variant: variant, size: size, fullWidth: fullWidth, isLoading: isLoading)
     }
 }
 
 /// Convenience text button with an optional leading 20pt icon.
+///
+/// `isLoading` shows an 18pt spinner before the title (use a progress label such as
+/// "Opening sign-in…"), keeps the pressed fill and the same footprint, and ignores taps. The
+/// spinner is static when Reduce Motion is on.
 struct TalkdeskButton: View {
     let title: LocalizedStringKey
     var variant: TalkdeskButtonVariant = .primary
     var size: TalkdeskButtonSize = .regular
     var fullWidth: Bool = false
     var icon: Image?
+    var isLoading: Bool = false
     let action: () -> Void
 
     init(
@@ -115,6 +124,7 @@ struct TalkdeskButton: View {
         size: TalkdeskButtonSize = .regular,
         fullWidth: Bool = false,
         icon: Image? = nil,
+        isLoading: Bool = false,
         action: @escaping () -> Void
     ) {
         self.title = title
@@ -122,19 +132,48 @@ struct TalkdeskButton: View {
         self.size = size
         self.fullWidth = fullWidth
         self.icon = icon
+        self.isLoading = isLoading
         self.action = action
     }
 
     var body: some View {
         Button(action: action) {
-            HStack(spacing: TalkdeskSpacing.s8) {
-                if let icon {
+            HStack(spacing: isLoading ? TalkdeskSpacing.s12 : TalkdeskSpacing.s8) {
+                if isLoading {
+                    ButtonSpinner()
+                } else if let icon {
                     icon.resizable().frame(width: TalkdeskSizes.iconSmall, height: TalkdeskSizes.iconSmall)
                 }
                 Text(title)
             }
         }
-        .buttonStyle(.talkdesk(variant, size: size, fullWidth: fullWidth))
+        .buttonStyle(.talkdesk(variant, size: size, fullWidth: fullWidth, isLoading: isLoading))
+        .allowsHitTesting(!isLoading)
+        .accessibilityAddTraits(isLoading ? .updatesFrequently : [])
+    }
+}
+
+/// 18pt spinner for the button loading state: a 2pt ring at 40% of the label colour with a
+/// rotating quarter in the label colour.
+private struct ButtonSpinner: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var rotation: Double = 0
+
+    var body: some View {
+        ZStack {
+            Circle().stroke(.primary.opacity(0.4), lineWidth: 2)
+            Circle()
+                .trim(from: 0, to: 0.25)
+                .stroke(.primary, lineWidth: 2)
+                .rotationEffect(.degrees(rotation - 135))
+        }
+        .padding(1)
+        .frame(width: 18, height: 18)
+        .onAppear {
+            guard !reduceMotion else { return }
+            withAnimation(.linear(duration: 0.8).repeatForever(autoreverses: false)) { rotation = 360 }
+        }
+        .accessibilityHidden(true)
     }
 }
 
@@ -181,6 +220,7 @@ struct TalkdeskLink: View {
             TalkdeskButton("Small", size: .small) {}
         }
         TalkdeskButton("Continue", fullWidth: true) {}
+        TalkdeskButton("Opening sign-in…", fullWidth: true, isLoading: true) {}
         TalkdeskLink("Show more") {}
     }
     .padding()

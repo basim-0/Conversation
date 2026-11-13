@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="auth_app_name">Talkdesk Conversations</string>
+
+    <!-- Account name screen -->
+    <string name="auth_sign_in_title">Sign in</string>
+    <string name="auth_sign_in_description">Enter your Talkdesk account name. You\'ll continue to your company\'s sign-in page.</string>
+    <string name="auth_account_name_label">Account name</string>
+    <string name="auth_account_name_placeholder">your-company</string>
+    <string name="auth_account_name_suffix">.mytalkdesk.com</string>
+    <string name="auth_account_name_helper">The first part of your Talkdesk web address</string>
+    <string name="auth_account_name_error_empty">Enter your account name.</string>
+    <string name="auth_account_name_error_invalid">Use only letters, numbers and hyphens, without spaces.</string>
+    <string name="auth_continue">Continue</string>
+    <string name="auth_opening_sign_in">Opening sign-in…</string>
+    <string name="auth_help_link">Can\'t find your account name?</string>
+    <string name="auth_offline_message">No internet connection</string>
+    <string name="auth_retry">Retry</string>
+    <string name="auth_banner_not_finished_title">Sign-in didn\'t finish</string>
+    <string name="auth_banner_not_finished_message">If you didn\'t see your company\'s sign-in page, check that \"%1$s\" is your account name.</string>
+    <string name="auth_banner_failed_title">Sign-in couldn\'t be completed</string>
+    <string name="auth_banner_failed_message">Try again, or contact your Talkdesk administrator.</string>
+
+    <!-- Welcome back screen -->
+    <string name="auth_welcome_back_title">Welcome back</string>
+    <string name="auth_welcome_back_description">Continue to your company\'s sign-in page.</string>
+    <string name="auth_use_different_account">Use a different account</string>
+
+    <!-- Signing in screen -->
+    <string name="auth_signing_in">Signing you in…</string>
+
+    <string name="auth_account_host">%1$s.mytalkdesk.com</string>
+</resources>

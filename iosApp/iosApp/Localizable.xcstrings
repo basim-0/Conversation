@@ -1,0 +1,84 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "" : {
+
+    },
+    ".mytalkdesk.com" : {
+
+    },
+    "%@.mytalkdesk.com" : {
+
+    },
+    "Account name" : {
+
+    },
+    "Can't find your account name?" : {
+
+    },
+    "Cancel" : {
+
+    },
+    "Check your connection, then tap Continue." : {
+
+    },
+    "Clear" : {
+
+    },
+    "Click me!" : {
+
+    },
+    "Continue" : {
+
+    },
+    "Continue to your company's sign-in page." : {
+
+    },
+    "Enter your Talkdesk account name. You'll continue to your company's sign-in page." : {
+
+    },
+    "If you didn't see your company's sign-in page, check that \"%@\" is your account name." : {
+
+    },
+    "No internet connection" : {
+
+    },
+    "Opening sign-in…" : {
+
+    },
+    "Sign in" : {
+
+    },
+    "Sign-in couldn't be completed" : {
+
+    },
+    "Sign-in didn't finish" : {
+
+    },
+    "Signing you in…" : {
+
+    },
+    "SwiftUI: %@" : {
+
+    },
+    "Talkdesk Conversations" : {
+
+    },
+    "The first part of your Talkdesk web address" : {
+
+    },
+    "Try again, or contact your Talkdesk administrator." : {
+
+    },
+    "Use a different account" : {
+
+    },
+    "Welcome back" : {
+
+    },
+    "your-company" : {
+
+    }
+  },
+  "version" : "1.0"
+}

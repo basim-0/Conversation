@@ -131,9 +131,12 @@ fun TalkdeskSpinner(modifier: Modifier = Modifier) {
     }
 }
 
-/** True when the user turned animations off (Settings › Accessibility › Remove animations). */
+/**
+ * True when the user turned animations off (Settings › Accessibility › Remove animations). Use it to
+ * replace movement with a short crossfade or a static frame.
+ */
 @Composable
-private fun rememberReduceMotion(): Boolean {
+fun rememberReduceMotion(): Boolean {
     val resolver = LocalContext.current.contentResolver
     return remember(resolver) {
         Settings.Global.getFloat(resolver, Settings.Global.ANIMATOR_DURATION_SCALE, 1f) == 0f

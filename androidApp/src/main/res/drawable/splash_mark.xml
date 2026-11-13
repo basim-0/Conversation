@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  System splash icon: the first frame of SplashTransition. Splash icons without an icon background
+  are 288dp and must fit a 192dp circle. Centred: the 96dp white mark (radius 24) with the 56dp
+  chat-bubble glyph in action-primary, its three dots at 35% (the animation's resting state).
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="288dp"
+    android:height="288dp"
+    android:viewportWidth="288"
+    android:viewportHeight="288">
+    <path
+        android:fillColor="@color/splash_mark"
+        android:pathData="M120,96 L168,96 A24,24 0 0 1 192,120 L192,168 A24,24 0 0 1 168,192 L120,192 A24,24 0 0 1 96,168 L96,120 A24,24 0 0 1 120,96 Z" />
+    <group
+        android:translateX="116"
+        android:translateY="116"
+        android:scaleX="2.3333333"
+        android:scaleY="2.3333333">
+        <path
+            android:pathData="M4,5 L20,5 L20,16 L9,16 L4,20 Z"
+            android:strokeColor="@color/splash_background"
+            android:strokeWidth="2"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round" />
+        <path
+            android:fillAlpha="0.35"
+            android:fillColor="@color/splash_background"
+            android:pathData="M6.75,10.5 a1.25,1.25 0 1,0 2.5,0 a1.25,1.25 0 1,0 -2.5,0 M10.75,10.5 a1.25,1.25 0 1,0 2.5,0 a1.25,1.25 0 1,0 -2.5,0 M14.75,10.5 a1.25,1.25 0 1,0 2.5,0 a1.25,1.25 0 1,0 -2.5,0" />
+    </group>
+</vector>
