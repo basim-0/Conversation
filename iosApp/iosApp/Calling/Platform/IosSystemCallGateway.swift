@@ -19,6 +19,9 @@ final class IosSystemCallGateway: NSObject, SystemCallGateway {
     private var listener: SystemCallListener?
     private var provisional: UUID?
     private var provisionalTimeout: DispatchWorkItem?
+    /// What the agent did on the provisional call before the domain call existed; applied when `addCall` adopts it.
+    private enum ProvisionalAction { case answer, end }
+    private var provisionalAction: ProvisionalAction?
     /// Domain call id -> CallKit uuid (differs only for an adopted provisional call).
     private var uuids: [String: UUID] = [:]
     private var outgoingConnected: Set<UUID> = []
@@ -58,7 +61,10 @@ final class IosSystemCallGateway: NSObject, SystemCallGateway {
     /// call in `addCall`, or ended after a short wait when none follows.
     func reportProvisionalIncoming(completion: @escaping () -> Void) {
         let uuid = UUID()
-        lock.withLock { provisional = uuid }
+        lock.withLock {
+            provisional = uuid
+            provisionalAction = nil
+        }
         let update = CXCallUpdate()
         update.remoteHandle = CXHandle(type: .generic, value: "Talkdesk")
         update.localizedCallerName = String(localized: "Incoming call")
@@ -98,11 +104,14 @@ final class IosSystemCallGateway: NSObject, SystemCallGateway {
         }
         let handle = CXHandle(type: .phoneNumber, value: number)
         if direction == .incoming {
-            let adopted: UUID? = lock.withLock {
+            let (adopted, action): (UUID?, ProvisionalAction?) = lock.withLock {
                 provisionalTimeout?.cancel()
                 provisionalTimeout = nil
-                defer { provisional = nil }
-                return provisional
+                defer {
+                    provisional = nil
+                    provisionalAction = nil
+                }
+                return (provisional, provisionalAction)
             }
             let uuid = adopted ?? domainUUID
             lock.withLock { uuids[callId] = uuid }
@@ -117,6 +126,16 @@ final class IosSystemCallGateway: NSObject, SystemCallGateway {
             if adopted != nil {
                 provider.reportCall(with: uuid, updated: update)
                 onResult(nil)
+                // The agent was faster than the invite: do now what they asked on the system call screen.
+                switch action {
+                case .answer:
+                    markConnected(callId)
+                    currentListener?.onAnswerRequested(callId: callId)
+                case .end:
+                    currentListener?.onDisconnectRequested(callId: callId)
+                case nil:
+                    break
+                }
             } else {
                 provider.reportNewIncomingCall(with: uuid, update: update) { error in
                     onResult(error?.localizedDescription)
@@ -278,6 +297,9 @@ extension IosSystemCallGateway: CXProviderDelegate {
         if let id = callId(for: action.callUUID) {
             markConnected(id)
             currentListener?.onAnswerRequested(callId: id)
+        } else {
+            // Answered before the invite reached the domain: remember it for `addCall`.
+            lock.withLock { if provisional == action.callUUID { provisionalAction = .answer } }
         }
         action.fulfill()
     }
@@ -285,9 +307,9 @@ extension IosSystemCallGateway: CXProviderDelegate {
     func provider(_ provider: CXProvider, perform action: CXEndCallAction) {
         if let id = callId(for: action.callUUID) {
             currentListener?.onDisconnectRequested(callId: id)
-        } else if lock.withLock({ provisional }) == action.callUUID {
-            // The agent declined before the invite reached the domain: the invite is dropped when it arrives.
-            endProvisionalSilently()
+        } else {
+            // Declined before the invite reached the domain: it is rejected as soon as it arrives.
+            lock.withLock { if provisional == action.callUUID { provisionalAction = .end } }
         }
         action.fulfill()
     }
@@ -326,13 +348,5 @@ extension IosSystemCallGateway: CXProviderDelegate {
 
     func provider(_ provider: CXProvider, timedOutPerforming action: CXAction) {
         action.fail()
-    }
-
-    private func endProvisionalSilently() {
-        lock.withLock {
-            provisionalTimeout?.cancel()
-            provisionalTimeout = nil
-            provisional = nil
-        }
     }
 }
