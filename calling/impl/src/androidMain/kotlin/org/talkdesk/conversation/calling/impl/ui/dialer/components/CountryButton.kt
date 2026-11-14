@@ -20,7 +20,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.unit.dp
 import org.talkdesk.conversation.calling.impl.R
-import org.talkdesk.conversation.calling.impl.presentation.dialer.DialCountry
+import org.talkdesk.conversation.calling.impl.domain.model.DialCountry
 import org.talkdesk.conversation.calling.impl.ui.CallingPreviews
 import org.talkdesk.conversation.calling.impl.ui.PreviewSurface
 import org.talkdesk.conversation.core.designsystem.icon.TalkdeskIcons

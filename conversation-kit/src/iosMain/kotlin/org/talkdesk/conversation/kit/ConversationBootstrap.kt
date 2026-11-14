@@ -3,6 +3,9 @@ package org.talkdesk.conversation.kit
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
 import org.koin.mp.KoinPlatform
+import org.talkdesk.conversation.account.impl.di.accountIosModule
+import org.talkdesk.conversation.account.impl.di.accountModule
+import org.talkdesk.conversation.account.impl.presentation.AccountViewModel
 import org.talkdesk.conversation.activity.impl.di.activityModule
 import org.talkdesk.conversation.activity.impl.presentation.ActivityViewModel
 import org.talkdesk.conversation.auth.api.AuthSession
@@ -31,6 +34,8 @@ object ConversationBootstrap {
                 authIosModule,
                 authModule,
                 activityModule,
+                accountModule,
+                accountIosModule,
                 module {
                     single<Es256Signer> { es256Signer }
                     single<OAuthCredentialsProvider> { credentials }
@@ -46,6 +51,10 @@ object ConversationBootstrap {
     /** A new Activity ViewModel. The caller owns it and must call [ScopedViewModel.clear] when done. */
     fun makeActivityViewModel(): ScopedViewModel<ActivityViewModel> =
         scopedViewModel { KoinPlatform.getKoin().get<ActivityViewModel>() }
+
+    /** A new Account ViewModel. The caller owns it and must call [ScopedViewModel.clear] when done. */
+    fun makeAccountViewModel(): ScopedViewModel<AccountViewModel> =
+        scopedViewModel { KoinPlatform.getKoin().get<AccountViewModel>() }
 
     val authSession: AuthSession get() = KoinPlatform.getKoin().get()
 }

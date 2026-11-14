@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.talkdesk.conversation.account.impl.R
-import org.talkdesk.conversation.account.impl.presentation.AccountMock
 import org.talkdesk.conversation.account.impl.presentation.AccountState
 import org.talkdesk.conversation.core.designsystem.component.TalkdeskButton
 import org.talkdesk.conversation.core.designsystem.component.TalkdeskButtonVariant
@@ -26,9 +25,9 @@ import org.talkdesk.conversation.core.designsystem.theme.TalkdeskTheme
 
 private const val PreviewVersion = "6.9.0"
 
-private fun state(selectedId: String = AccountMock.AVAILABLE, loading: Boolean = false) = AccountState(
-    profile = AccountMock.profile,
-    statusGroups = AccountMock.statusGroups,
+private fun state(selectedId: String = AccountPreviewData.AVAILABLE, loading: Boolean = false) = AccountState(
+    profile = AccountPreviewData.profile,
+    statusGroups = AccountPreviewData.statusGroups,
     selectedStatusId = selectedId,
     isLoading = loading,
 )

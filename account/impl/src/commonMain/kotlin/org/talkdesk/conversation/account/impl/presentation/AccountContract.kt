@@ -2,6 +2,7 @@ package org.talkdesk.conversation.account.impl.presentation
 
 import org.talkdesk.conversation.account.impl.presentation.model.AgentProfile
 import org.talkdesk.conversation.account.impl.presentation.model.AgentStatus
+import org.talkdesk.conversation.account.impl.presentation.model.PresenceKind
 import org.talkdesk.conversation.account.impl.presentation.model.StatusGroup
 
 /**
@@ -14,6 +15,8 @@ data class AccountState(
     val statusGroups: List<StatusGroup> = emptyList(),
     /** The status the agent has right now (optimistic while a change is in flight). */
     val selectedStatusId: String? = null,
+    /** Presence of the current status, also when that status is not selectable (e.g. Busy). */
+    val currentPresence: PresenceKind? = null,
     /** First load only: skeleton rows keep the layout. */
     val isLoading: Boolean = true,
     /** A status change is in flight: rows ignore taps, nothing else is blocked. */
@@ -47,8 +50,8 @@ sealed interface AccountIntent {
 }
 
 sealed interface AccountEffect {
-    /** Toast "Status set to [statusLabel]" with Undo (4 seconds). */
-    data class StatusChanged(val statusLabel: String) : AccountEffect
+    /** Toast "Status set to [status]" with Undo (4 seconds). */
+    data class StatusChanged(val status: AgentStatus) : AccountEffect
 
     /** Error toast with Retry; stays until dismissed. */
     data object StatusChangeFailed : AccountEffect

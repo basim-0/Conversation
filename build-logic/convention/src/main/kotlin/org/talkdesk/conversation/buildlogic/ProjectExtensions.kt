@@ -16,6 +16,9 @@ internal val Project.targetSdkVersion: Int get() = libs.version("android-targetS
 
 internal const val NAMESPACE_ROOT = "org.talkdesk.conversation"
 
+/** Same id as the legacy production app: keeps the Firebase project, FCM tokens and Twilio push credential. */
+internal const val APPLICATION_ID = "com.talkdesk.agent"
+
 /** `:auth:impl` -> `org.talkdesk.conversation.auth.impl` */
 internal val Project.derivedNamespace: String
     get() = path.split(':')

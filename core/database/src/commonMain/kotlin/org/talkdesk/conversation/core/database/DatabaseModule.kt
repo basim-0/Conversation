@@ -5,4 +5,6 @@ import org.koin.dsl.module
 /** Shared bindings. Included by [databaseAndroidModule] / [databaseIosModule]; hosts list only those. */
 internal val databaseModule = module {
     single { get<ConversationDatabase>().activityDao() }
+    single { get<ConversationDatabase>().agentDao() }
+    single { get<ConversationDatabase>().callerIdDao() }
 }

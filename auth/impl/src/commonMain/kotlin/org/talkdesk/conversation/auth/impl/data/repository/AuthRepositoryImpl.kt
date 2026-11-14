@@ -2,12 +2,17 @@ package org.talkdesk.conversation.auth.impl.data.repository
 
 import io.ktor.http.URLBuilder
 import io.ktor.http.Url
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withTimeoutOrNull
 import org.talkdesk.conversation.auth.api.SessionState
+import org.talkdesk.conversation.auth.api.SignOutHook
 import org.talkdesk.conversation.auth.impl.AuthConfig
 import org.talkdesk.conversation.auth.impl.data.local.AuthStorage
 import org.talkdesk.conversation.auth.impl.data.remote.TalkdeskIdApi
@@ -28,6 +33,8 @@ internal class AuthRepositoryImpl(
     private val api: TalkdeskIdApi,
     private val storage: AuthStorage,
     private val credentialsProvider: OAuthCredentialsProvider,
+    /** Resolved lazily at logout: hooks depend on the authorized client, which depends on this repository. */
+    private val signOutHooks: () -> List<SignOutHook> = { emptyList() },
     private val nowMillis: () -> Long = { Clock.System.now().toEpochMilliseconds() },
 ) : AuthRepository {
 
@@ -153,6 +160,7 @@ internal class AuthRepositoryImpl(
     }
 
     override suspend fun logout() {
+        runSignOutHooks()
         endSessionBestEffort()
         storage.clearTokens()
         refreshFailures = 0
@@ -162,6 +170,27 @@ internal class AuthRepositoryImpl(
     override suspend fun forgetAccount() {
         storage.clearAccount()
         _session.value = SessionState.SignedOut(accountName = null, sessionExpired = false)
+    }
+
+    // Features tear down while the tokens are still valid. Failures never block the sign-out.
+    private suspend fun runSignOutHooks() {
+        val hooks = signOutHooks()
+        if (hooks.isEmpty()) return
+        withTimeoutOrNull(AuthConfig.BEST_EFFORT_TIMEOUT_MILLIS.milliseconds) {
+            coroutineScope {
+                hooks.map { hook ->
+                    async {
+                        try {
+                            hook.beforeSignOut()
+                        } catch (e: CancellationException) {
+                            throw e
+                        } catch (_: Throwable) {
+                            // Best effort.
+                        }
+                    }
+                }.awaitAll()
+            }
+        }
     }
 
     private suspend fun endSessionBestEffort() {

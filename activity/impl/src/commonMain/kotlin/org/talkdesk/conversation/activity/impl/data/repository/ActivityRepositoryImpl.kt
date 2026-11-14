@@ -17,18 +17,19 @@ import org.talkdesk.conversation.core.database.dao.ActivityDao
 import org.talkdesk.conversation.core.database.entity.ActivityEntity
 import org.talkdesk.conversation.core.network.utils.ApiException
 import kotlin.time.Clock
+import org.talkdesk.conversation.account.api.AgentRepository
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Instant
 
 internal class ActivityRepositoryImpl(
     private val api: ActivityApi,
     private val dao: ActivityDao,
+    private val agents: AgentRepository,
     private val clock: Clock = Clock.System,
 ) : ActivityRepository {
 
     // Guards the in-memory paging state below and keeps refresh / load-more from interleaving.
     private val mutex = Mutex()
-    private var agentId: String? = null
     private val nextPages = mutableMapOf<Set<ActivityType>, Int?>()
 
     override fun observe(types: Set<ActivityType>): Flow<List<Activity>> =
@@ -50,7 +51,6 @@ internal class ActivityRepositoryImpl(
 
     override suspend fun clear() {
         mutex.withLock {
-            agentId = null
             nextPages.clear()
             dao.clear()
         }
@@ -66,7 +66,7 @@ internal class ActivityRepositoryImpl(
             dateFrom = windowStart.toApiTimestamp(),
             dateTo = now.toApiTimestamp(),
         )
-        val me = agentId ?: api.agentMe().id.also { agentId = it }
+        val me = agents.agentId()
         val contacts = contactsOf(response.items)
         val rows = response.items.mapNotNull { it.toEntity(contacts, me, now) }
 

@@ -25,7 +25,11 @@ internal fun CallerIdLine(callerId: CallerId, modifier: Modifier = Modifier) {
     Row(modifier, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         Icon(TalkdeskIcons.PhoneOut, contentDescription = null, tint = colors.textDescription, modifier = Modifier.size(TalkdeskTheme.sizes.iconSmall))
         Text(
-            stringResource(R.string.calling_calling_from, callerId.label, callerId.number),
+            if (callerId.label != null) {
+                stringResource(R.string.calling_calling_from, callerId.label, callerId.number)
+            } else {
+                stringResource(R.string.calling_calling_from_number, callerId.number)
+            },
             style = TalkdeskTheme.typography.labelRegular,
             color = colors.textDescription,
             maxLines = 2,

@@ -2,22 +2,22 @@ package org.talkdesk.conversation.calling.impl.ui.navigation
 
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
-import org.talkdesk.conversation.calling.api.CallRoute
-import org.talkdesk.conversation.calling.api.IncomingCallRoute
+import org.talkdesk.conversation.calling.api.CountryPickerRoute
 import org.talkdesk.conversation.calling.api.NewCallRoute
 
 /**
- * The Calling feature's navigation entries: the dialer, the call screen and the incoming call. They are
- * full-screen destinations above the home shell.
+ * The Calling feature's navigation entries. Only the dialer is a navigation destination: the call screens
+ * are hosted by their own activity (see `CallActivity`) so they can show over the lock screen.
  *
- * @param onClose leave the current calling screen (back, call ended or minimized, incoming declined).
- * @param onCallStarted replace the dialer or incoming screen with the call screen.
+ * @param onClose leave the current screen (back).
+ * @param onCallStarted the call exists and its screen is open: close the dialer.
+ * @param onPickCountry open the country list.
  */
 fun EntryProviderScope<NavKey>.callingEntries(
     onClose: () -> Unit,
     onCallStarted: () -> Unit,
+    onPickCountry: () -> Unit,
 ) {
-    entry<NewCallRoute> { DialerFlow(onBack = onClose, onCallStarted = onCallStarted) }
-    entry<CallRoute> { CallFlow(onClose = onClose) }
-    entry<IncomingCallRoute> { IncomingCallFlow(onAccepted = onCallStarted, onDeclined = onClose) }
+    entry<NewCallRoute> { DialerFlow(onBack = onClose, onCallStarted = onCallStarted, onPickCountry = onPickCountry) }
+    entry<CountryPickerRoute> { CountryPickerFlow(onClose = onClose) }
 }

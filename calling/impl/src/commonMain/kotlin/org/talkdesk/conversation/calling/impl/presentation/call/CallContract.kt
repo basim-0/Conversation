@@ -1,5 +1,6 @@
 package org.talkdesk.conversation.calling.impl.presentation.call
 
+import org.talkdesk.conversation.calling.impl.domain.model.CallQuality
 import org.talkdesk.conversation.calling.impl.presentation.CallContact
 
 /**
@@ -26,8 +27,6 @@ data class CallState(
 }
 
 enum class CallPhase { Calling, OnCall, OnHold }
-
-enum class CallQuality { Excellent, Good, Poor }
 
 sealed interface CallIntent {
     data object ToggleMute : CallIntent

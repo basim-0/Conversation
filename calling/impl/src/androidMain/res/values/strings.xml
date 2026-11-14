@@ -4,16 +4,25 @@
     <string name="calling_new_call_title">New call</string>
     <string name="calling_back">Back</string>
     <string name="calling_calling_from">Calling from %1$s · %2$s</string>
+    <string name="calling_calling_from_number">Calling from %1$s</string>
     <string name="calling_country_picker">Country: %1$s, %2$s</string>
     <string name="calling_enter_number">Enter a number</string>
     <string name="calling_choose_contact">Choose a contact</string>
     <string name="calling_delete_digit">Delete digit</string>
     <string name="calling_clear_number">Clear number</string>
     <string name="calling_invalid_number">Check the number and try again</string>
+    <string name="calling_microphone_required">Allow microphone access to make and answer calls</string>
+    <string name="calling_call_failed">Couldn\'t connect the call</string>
+    <string name="calling_call_busy">Finish your current call first</string>
+    <string name="calling_offline">No connection. Check your network and try again</string>
     <string name="calling_use_contact">Use</string>
     <string name="calling_call">Call</string>
     <string name="calling_call_number">Call %1$s</string>
-    <string name="calling_flag_us">United States flag</string>
+    <string name="calling_country_title">Select country</string>
+    <string name="calling_country_search">Search by name or code</string>
+    <string name="calling_country_search_clear">Clear search</string>
+    <string name="calling_country_empty_title">No countries found</string>
+    <string name="calling_country_empty_body">Try a different name or dial code.</string>
 
     <!-- Call -->
     <string name="calling_minimize">Minimize call</string>
@@ -41,4 +50,10 @@
     <string name="calling_incoming_line">To %1$s · Talkdesk Conversations</string>
     <string name="calling_accept">Accept</string>
     <string name="calling_decline">Decline</string>
+
+    <!-- Notifications -->
+    <string name="calling_channel_ringing">Ringing Call</string>
+    <string name="calling_channel_ringing_description">Incoming calls</string>
+    <string name="calling_channel_on_call">On Call</string>
+    <string name="calling_channel_on_call_description">The call in progress</string>
 </resources>

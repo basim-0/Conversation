@@ -19,6 +19,7 @@ import org.talkdesk.conversation.account.impl.presentation.AccountEffect
 import org.talkdesk.conversation.account.impl.presentation.AccountIntent
 import org.talkdesk.conversation.account.impl.presentation.AccountViewModel
 import org.talkdesk.conversation.account.impl.ui.AccountScreen
+import org.talkdesk.conversation.account.impl.ui.displayName
 import org.talkdesk.conversation.core.designsystem.component.TalkdeskToastVariant
 import org.talkdesk.conversation.core.designsystem.component.showTalkdeskToast
 import org.talkdesk.conversation.core.designsystem.icon.TalkdeskIcons
@@ -50,7 +51,7 @@ internal fun AccountFlow(
             is AccountEffect.StatusChanged -> scope.launch {
                 snackbarHostState.currentSnackbarData?.dismiss()
                 val result = snackbarHostState.showTalkdeskToast(
-                    message = context.getString(R.string.account_status_changed, effect.statusLabel),
+                    message = context.getString(R.string.account_status_changed, effect.status.displayName(context)),
                     variant = TalkdeskToastVariant.Primary,
                     actionLabel = context.getString(R.string.account_status_changed_undo),
                     icon = checkIcon,

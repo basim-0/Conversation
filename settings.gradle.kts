@@ -25,6 +25,16 @@ dependencyResolutionManagement {
             }
         }
         mavenCentral()
+        // Talkdesk Osiris SDK (agent status realtime). Needs GITHUB_ACTOR / GITHUB_TOKEN in ~/.gradle/gradle.properties.
+        maven {
+            name = "TalkdeskOsiris"
+            url = uri("https://maven.pkg.github.com/Talkdesk/mobile-osiris-sdk")
+            credentials {
+                username = providers.gradleProperty("GITHUB_ACTOR").orNull
+                password = providers.gradleProperty("GITHUB_TOKEN").orNull
+            }
+            content { includeGroup("com.talkdesk.mobile") }
+        }
     }
 }
 
@@ -35,6 +45,7 @@ include(":core:ui")
 include(":core:datastore")
 include(":core:network")
 include(":core:database")
+include(":core:push")
 include(":auth:api")
 include(":auth:impl")
 include(":activity:api")

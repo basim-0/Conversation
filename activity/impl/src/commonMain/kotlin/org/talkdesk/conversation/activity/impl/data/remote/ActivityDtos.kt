@@ -56,6 +56,3 @@ internal data class ContactPhoneDto(val number: String? = null)
 @Serializable
 internal data class ContactEmailDto(val email: String? = null)
 
-/** `GET callbar/mobile-app/agents/me` (only the id is used). */
-@Serializable
-internal data class AgentDto(val id: String)

@@ -41,10 +41,6 @@ internal class ActivityApi(
         }.ensureSuccess().body()
     }
 
-    suspend fun agentMe(): AgentDto = apiCall {
-        client.get("${baseUrl.get()}/callbar/mobile-app/agents/me").ensureSuccess().body()
-    }
-
     companion object {
         const val PAGE_SIZE = 20
         private const val ORDER_BY = "interaction_started_at:DESC"

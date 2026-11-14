@@ -16,6 +16,7 @@
     <string name="account_presence_away">Away</string>
     <string name="account_presence_offline">Offline</string>
     <string name="account_presence_busy">Busy</string>
+    <string name="account_status_after_call_work">After call work</string>
     <string name="account_status_changed">Status set to %1$s</string>
     <string name="account_status_changed_undo">Undo</string>
     <string name="account_status_failed">Couldn\'t change your status</string>

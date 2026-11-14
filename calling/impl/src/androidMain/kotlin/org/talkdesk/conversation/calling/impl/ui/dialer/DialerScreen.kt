@@ -84,7 +84,7 @@ fun DialerScreen(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             CountryButton(state.country, onClick = { onIntent(DialerIntent.PickCountry) })
-            CallerIdLine(state.callerId, Modifier.weight(1f))
+            state.callerId?.let { CallerIdLine(it, Modifier.weight(1f)) } ?: Spacer(Modifier.weight(1f))
         }
         Spacer(Modifier.weight(1f))
         NumberReadout(

@@ -23,11 +23,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.talkdesk.conversation.account.impl.R
-import org.talkdesk.conversation.account.impl.presentation.AccountMock
 import org.talkdesk.conversation.account.impl.presentation.model.AgentStatus
 import org.talkdesk.conversation.account.impl.presentation.model.StatusGroup
 import org.talkdesk.conversation.account.impl.presentation.model.StatusGroupKind
+import org.talkdesk.conversation.account.impl.ui.AccountPreviewData
 import org.talkdesk.conversation.account.impl.ui.AccountPreviews
+import org.talkdesk.conversation.account.impl.ui.displayName
 import org.talkdesk.conversation.account.impl.ui.PreviewSurface
 import org.talkdesk.conversation.core.designsystem.component.TalkdeskSkeleton
 import org.talkdesk.conversation.core.designsystem.icon.TalkdeskIcons
@@ -87,7 +88,7 @@ private fun StatusRow(status: AgentStatus, selected: Boolean, enabled: Boolean, 
         StatusIndicator(status.presence)
         Column(Modifier.weight(1f)) {
             Text(
-                text = status.label,
+                text = status.displayName(),
                 style = if (selected) TalkdeskTheme.typography.bodyStrong else TalkdeskTheme.typography.body,
                 color = if (status.isSystemSet) colors.textDescription else colors.textDefault,
                 maxLines = 1,
@@ -135,6 +136,6 @@ private fun StatusGroupKind.titleRes() = when (this) {
 @Composable
 private fun StatusListPreview() = PreviewSurface {
     Column {
-        StatusList(AccountMock.statusGroups, selectedStatusId = "away-lunch", enabled = true, onSelect = {})
+        StatusList(AccountPreviewData.statusGroups, selectedStatusId = "away-lunch", enabled = true, onSelect = {})
     }
 }

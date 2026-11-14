@@ -24,3 +24,13 @@ interface AuthSession {
     /** Ends the session on the server (best effort), clears the stored tokens and signs out. */
     suspend fun logout()
 }
+
+/**
+ * Work a feature must do while the session is still valid, before the user is signed out
+ * (e.g. set the agent offline, unregister from push). Register implementations in Koin as `factory`/`single`
+ * bindings of this interface; `logout()` runs all of them in parallel, best effort, with a timeout.
+ * Hooks are not run when the session is revoked by the server (the tokens are already dead).
+ */
+fun interface SignOutHook {
+    suspend fun beforeSignOut()
+}

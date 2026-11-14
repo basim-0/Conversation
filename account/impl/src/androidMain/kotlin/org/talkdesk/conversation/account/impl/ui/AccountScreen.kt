@@ -74,7 +74,7 @@ fun AccountScreen(
             Column(Modifier.weight(1f).verticalScroll(scrollState)) {
                 ProfileCard(
                     profile = state.profile,
-                    presence = state.selectedStatus?.presence,
+                    presence = state.currentPresence,
                     modifier = Modifier.padding(start = 16.dp, top = 4.dp, end = 16.dp, bottom = 8.dp),
                 )
                 Text(

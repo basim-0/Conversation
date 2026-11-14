@@ -3,6 +3,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.configure
+import org.talkdesk.conversation.buildlogic.APPLICATION_ID
 import org.talkdesk.conversation.buildlogic.NAMESPACE_ROOT
 import org.talkdesk.conversation.buildlogic.configureCommonAndroid
 import org.talkdesk.conversation.buildlogic.configureOAuthBuildConfig
@@ -20,7 +21,7 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
             extensions.configure<ApplicationExtension> {
                 namespace = NAMESPACE_ROOT
                 defaultConfig {
-                    applicationId = NAMESPACE_ROOT
+                    applicationId = APPLICATION_ID
                     versionCode = 1
                     versionName = "1.0"
                     targetSdk = targetSdkVersion

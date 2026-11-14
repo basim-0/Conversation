@@ -7,10 +7,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data object NewCallRoute : NavKey
 
-/** The call screen: calling, on call and on hold, with the in-call keypad. */
+/** The country list opened from the dialer to pick the dial code. The choice is remembered by the calling feature. */
 @Serializable
-data object CallRoute : NavKey
-
-/** Full-screen incoming call (lock screen / full-screen intent). */
-@Serializable
-data object IncomingCallRoute : NavKey
+data object CountryPickerRoute : NavKey

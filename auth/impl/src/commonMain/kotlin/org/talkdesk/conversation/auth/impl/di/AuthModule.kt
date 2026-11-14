@@ -7,9 +7,11 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import org.talkdesk.conversation.auth.api.AuthSession
+import org.talkdesk.conversation.auth.api.SignOutHook
 import org.talkdesk.conversation.auth.impl.data.repository.AgentAccessCheckerImpl
 import org.talkdesk.conversation.auth.impl.data.repository.AuthRepositoryImpl
 import org.talkdesk.conversation.auth.impl.data.AuthSessionImpl
+import org.talkdesk.conversation.auth.impl.data.SessionStartup
 import org.talkdesk.conversation.auth.impl.data.local.AuthStorage
 import org.talkdesk.conversation.auth.impl.data.ClientAssertionFactory
 import org.talkdesk.conversation.auth.impl.data.local.DataStoreAuthStorage
@@ -41,7 +43,13 @@ val authModule = module {
     single { ClientAssertionFactory(signer = get()) }
     single { TalkdeskIdApi(client = get<HttpClient>(), assertions = get()) }
     single<AuthRepository> {
-        AuthRepositoryImpl(api = get(), storage = get(), credentialsProvider = get())
+        val scope = this
+        AuthRepositoryImpl(
+            api = get(),
+            storage = get(),
+            credentialsProvider = get(),
+            signOutHooks = { scope.getAll<SignOutHook>() },
+        )
     }
 
     // Authenticated client: bearer header + refresh-on-expired (single-flight, one retry).
@@ -72,5 +80,6 @@ val authModule = module {
     factory { ForgetAccountUseCase(get()) }
 
     single<AuthSession> { AuthSessionImpl(get(), get()) }
+    single(createdAtStart = true) { SessionStartup(repository = get()) }
     viewModel { LoginViewModel(get(), get(), get(), get(), get(), get()) }
 }

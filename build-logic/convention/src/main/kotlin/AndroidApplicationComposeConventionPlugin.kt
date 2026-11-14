@@ -17,6 +17,7 @@ private val AppModules = listOf(
     ":core:network",
     ":core:datastore",
     ":core:database",
+    ":core:push",
     ":auth:api",
     ":auth:impl",
     ":activity:api",

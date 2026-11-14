@@ -17,7 +17,7 @@ import org.talkdesk.conversation.core.network.AuthorizedHttpClient
  */
 val activityModule = module {
     single { ActivityApi(client = get<HttpClient>(AuthorizedHttpClient), baseUrl = get()) }
-    single<ActivityRepository> { ActivityRepositoryImpl(api = get(), dao = get()) }
+    single<ActivityRepository> { ActivityRepositoryImpl(api = get(), dao = get(), agents = get()) }
     single(createdAtStart = true) { ActivitySessionCleaner(session = get(), repository = get()) }
     viewModel { ActivityViewModel(repository = get()) }
 }

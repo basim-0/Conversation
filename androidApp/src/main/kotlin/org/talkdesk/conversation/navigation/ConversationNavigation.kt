@@ -32,8 +32,9 @@ import org.talkdesk.conversation.auth.api.AuthSession
 import org.talkdesk.conversation.auth.api.LoginRoute
 import org.talkdesk.conversation.auth.api.SessionState
 import org.talkdesk.conversation.auth.impl.ui.login.LoginFlow
-import org.talkdesk.conversation.calling.api.CallRoute
+import org.talkdesk.conversation.calling.api.CountryPickerRoute
 import org.talkdesk.conversation.calling.api.NewCallRoute
+import org.talkdesk.conversation.calling.impl.ui.navigation.RequestCallingPermissions
 import org.talkdesk.conversation.calling.impl.ui.navigation.callingEntries
 import org.talkdesk.conversation.core.ui.LocalSharedTransitionScope
 import org.talkdesk.conversation.core.ui.LocalSharedVisibilityScope
@@ -82,14 +83,16 @@ internal fun ConversationRoot(
                 predictivePopTransitionSpec = { rootFadeThrough() },
                 entryProvider = entryProvider {
                     entry<LoginRoute> { LoginFlow(incomingRedirects = redirects) }
-                    entry<HomeRoute> { HomeScreen(tabEntries = homeEntries) }
-                    // Dialer, call and incoming screens are full-screen destinations above the home shell.
+                    entry<HomeRoute> {
+                        RequestCallingPermissions()
+                        HomeScreen(tabEntries = homeEntries)
+                    }
+                    // The dialer is a full-screen destination above the home shell. The call screens live in
+                    // their own activity (shown over the lock screen), which the dialer opens itself.
                     callingEntries(
                         onClose = { if (backStack.size > 1) backStack.removeLastOrNull() },
-                        onCallStarted = {
-                            backStack.removeLastOrNull()
-                            backStack.add(CallRoute)
-                        },
+                        onCallStarted = { if (backStack.size > 1) backStack.removeLastOrNull() },
+                        onPickCountry = { backStack.add(CountryPickerRoute) },
                     )
                 },
             )

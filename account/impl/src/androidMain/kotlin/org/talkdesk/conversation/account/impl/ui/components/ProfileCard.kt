@@ -17,8 +17,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import org.talkdesk.conversation.account.impl.R
-import org.talkdesk.conversation.account.impl.presentation.AccountMock
 import org.talkdesk.conversation.account.impl.presentation.model.AgentProfile
+import org.talkdesk.conversation.account.impl.ui.AccountPreviewData
 import org.talkdesk.conversation.account.impl.presentation.model.PresenceKind
 import org.talkdesk.conversation.account.impl.ui.AccountPreviews
 import org.talkdesk.conversation.account.impl.ui.PreviewSurface
@@ -82,8 +82,8 @@ private fun PresenceKind.labelRes() = when (this) {
 @Composable
 private fun ProfileCardPreview() = PreviewSurface {
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        ProfileCard(AccountMock.profile, PresenceKind.Available)
-        ProfileCard(AccountMock.profile, PresenceKind.Away)
-        ProfileCard(AccountMock.profile, PresenceKind.Offline)
+        ProfileCard(AccountPreviewData.profile, PresenceKind.Available)
+        ProfileCard(AccountPreviewData.profile, PresenceKind.Away)
+        ProfileCard(AccountPreviewData.profile, PresenceKind.Offline)
     }
 }

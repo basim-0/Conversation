@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import org.talkdesk.conversation.calling.impl.R
 import org.talkdesk.conversation.calling.impl.presentation.call.CallIntent
 import org.talkdesk.conversation.calling.impl.presentation.call.CallPhase
-import org.talkdesk.conversation.calling.impl.presentation.call.CallQuality
+import org.talkdesk.conversation.calling.impl.domain.model.CallQuality
 import org.talkdesk.conversation.calling.impl.presentation.call.CallState
 import org.talkdesk.conversation.calling.impl.ui.CallingPreviews
 import org.talkdesk.conversation.calling.impl.ui.rememberCallingHaptics
