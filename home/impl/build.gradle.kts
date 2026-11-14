@@ -6,6 +6,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(project(":activity:api"))
+            implementation(project(":account:api"))
         }
         androidMain.dependencies {
             implementation(libs.androidx.navigation3.ui)

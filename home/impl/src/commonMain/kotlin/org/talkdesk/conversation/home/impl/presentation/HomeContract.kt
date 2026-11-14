@@ -1,8 +1,8 @@
 package org.talkdesk.conversation.home.impl.presentation
 
 import androidx.navigation3.runtime.NavKey
+import org.talkdesk.conversation.account.api.AccountRoute
 import org.talkdesk.conversation.activity.api.ActivityRoute
-import org.talkdesk.conversation.home.api.AccountRoute
 import org.talkdesk.conversation.home.api.ContactsRoute
 import org.talkdesk.conversation.home.api.ConversationsRoute
 import org.talkdesk.conversation.home.api.VoicemailsRoute

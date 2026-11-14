@@ -13,6 +13,7 @@ import org.talkdesk.conversation.buildlogic.configureAndroidCompose
  */
 private val AppModules = listOf(
     ":core:designsystem",
+    ":core:ui",
     ":core:network",
     ":core:datastore",
     ":core:database",
@@ -22,6 +23,10 @@ private val AppModules = listOf(
     ":activity:impl",
     ":home:api",
     ":home:impl",
+    ":account:api",
+    ":account:impl",
+    ":calling:api",
+    ":calling:impl",
 )
 
 /** `conversation.android.application.compose` — Jetpack Compose on top of the application plugin. */

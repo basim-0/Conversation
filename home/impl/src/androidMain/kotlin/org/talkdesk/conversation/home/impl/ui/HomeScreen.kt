@@ -5,9 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.navigation3.runtime.NavEntry
@@ -30,11 +28,10 @@ import org.talkdesk.conversation.home.impl.ui.placeholder.placeholderEntries
  * The signed-in shell: Navigation 3 shows the selected tab above the bottom navigation, and each
  * tab keeps its own back stack. The screens belong to their features and arrive through
  * [tabEntries] (built by the app from each feature's entries), so Home never lists them.
- * Tabs whose feature does not exist yet show a placeholder; Account's has Sign out.
+ * Tabs whose feature does not exist yet show a placeholder.
  */
 @Composable
 fun HomeScreen(
-    onSignOut: () -> Unit,
     tabEntries: (NavKey) -> NavEntry<NavKey>,
     modifier: Modifier = Modifier,
 ) {
@@ -43,10 +40,9 @@ fun HomeScreen(
         topLevelRoutes = HomeTab.entries.map { it.route }.toSet(),
     )
     val navigator = remember(state) { Navigator(state) }
-    val currentOnSignOut by rememberUpdatedState(onSignOut)
     // Feature screens come from the app; placeholders cover tabs without a feature yet.
     val entries = remember(tabEntries) {
-        entryProvider<NavKey>(fallback = tabEntries) { placeholderEntries { currentOnSignOut() } }
+        entryProvider<NavKey>(fallback = tabEntries) { placeholderEntries() }
     }
     HomeContent(
         selectedTab = HomeTab.fromRoute(state.topLevelRoute),
@@ -88,11 +84,6 @@ internal fun HomeContent(
 @HomePreviews
 @Composable
 private fun HomeContactsPreview() = TalkdeskTheme {
-    HomeContent(HomeTab.Contacts, {}) { TabPlaceholder(HomeTab.Contacts, {}) }
+    HomeContent(HomeTab.Contacts, {}) { TabPlaceholder(HomeTab.Contacts) }
 }
 
-@HomePreviews
-@Composable
-private fun HomeAccountPreview() = TalkdeskTheme {
-    HomeContent(HomeTab.Account, {}) { TabPlaceholder(HomeTab.Account, {}) }
-}

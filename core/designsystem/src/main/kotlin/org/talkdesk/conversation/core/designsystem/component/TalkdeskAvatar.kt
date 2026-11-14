@@ -16,6 +16,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.font.FontWeight
 import org.talkdesk.conversation.core.designsystem.icon.TalkdeskIcons
 import org.talkdesk.conversation.core.designsystem.theme.TalkdeskTheme
 
@@ -51,7 +53,7 @@ fun TalkdeskAvatar(
                 Text(
                     text = initials,
                     color = colors.textBrand,
-                    style = if (large) TalkdeskTheme.typography.h2 else TalkdeskTheme.typography.label,
+                    style = if (large) TalkdeskTheme.typography.h2.copy(fontSize = 32.sp, lineHeight = 40.sp, fontWeight = FontWeight.Medium) else TalkdeskTheme.typography.label,
                 )
             }
         }

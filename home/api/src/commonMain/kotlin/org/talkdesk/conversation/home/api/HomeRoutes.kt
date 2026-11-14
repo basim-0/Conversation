@@ -18,6 +18,3 @@ data object ConversationsRoute : NavKey
 
 @Serializable
 data object VoicemailsRoute : NavKey
-
-@Serializable
-data object AccountRoute : NavKey

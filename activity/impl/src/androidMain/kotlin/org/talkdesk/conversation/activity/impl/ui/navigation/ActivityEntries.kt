@@ -6,8 +6,8 @@ import org.talkdesk.conversation.activity.api.ActivityRoute
 
 /**
  * The Activity feature's navigation entries. The app adds them to its entry provider, which the
- * home shell uses to show the Activity tab.
+ * home shell uses to show the Activity tab. [onNewCall] opens the dialer (a separate feature the app navigates to).
  */
-fun EntryProviderScope<NavKey>.activityEntries() {
-    entry<ActivityRoute> { ActivityFlow() }
+fun EntryProviderScope<NavKey>.activityEntries(onNewCall: () -> Unit) {
+    entry<ActivityRoute> { ActivityFlow(onNewCall = onNewCall) }
 }

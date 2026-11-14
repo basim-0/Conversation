@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dialer -->
+    <string name="calling_new_call_title">New call</string>
+    <string name="calling_back">Back</string>
+    <string name="calling_calling_from">Calling from %1$s · %2$s</string>
+    <string name="calling_country_picker">Country: %1$s, %2$s</string>
+    <string name="calling_enter_number">Enter a number</string>
+    <string name="calling_choose_contact">Choose a contact</string>
+    <string name="calling_delete_digit">Delete digit</string>
+    <string name="calling_clear_number">Clear number</string>
+    <string name="calling_invalid_number">Check the number and try again</string>
+    <string name="calling_use_contact">Use</string>
+    <string name="calling_call">Call</string>
+    <string name="calling_call_number">Call %1$s</string>
+    <string name="calling_flag_us">United States flag</string>
+
+    <!-- Call -->
+    <string name="calling_minimize">Minimize call</string>
+    <string name="calling_state_calling">Calling…</string>
+    <string name="calling_state_on_call">On call</string>
+    <string name="calling_state_on_hold">On hold</string>
+    <string name="calling_control_mute">Mute</string>
+    <string name="calling_control_unmute">Unmute</string>
+    <string name="calling_control_hold">Hold</string>
+    <string name="calling_control_resume">Resume</string>
+    <string name="calling_control_speaker">Speaker</string>
+    <string name="calling_control_keypad">Keypad</string>
+    <string name="calling_end">End</string>
+    <string name="calling_keypad_hide">Hide</string>
+    <string name="calling_quality_excellent">Excellent</string>
+    <string name="calling_quality_good">Good</string>
+    <string name="calling_quality_poor">Poor</string>
+    <string name="calling_quality_description">Call quality: %1$s</string>
+    <string name="calling_unknown_caller">Unknown caller</string>
+    <string name="calling_contact_line">%1$s · %2$s</string>
+    <string name="calling_state_time">%1$s · %2$s</string>
+
+    <!-- Incoming -->
+    <string name="calling_incoming_title">Incoming call</string>
+    <string name="calling_incoming_line">To %1$s · Talkdesk Conversations</string>
+    <string name="calling_accept">Accept</string>
+    <string name="calling_decline">Decline</string>
+</resources>

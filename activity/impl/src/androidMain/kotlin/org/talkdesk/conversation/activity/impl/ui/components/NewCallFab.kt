@@ -15,6 +15,8 @@ import androidx.compose.ui.unit.dp
 import org.talkdesk.conversation.core.designsystem.icon.TalkdeskIcons
 import org.talkdesk.conversation.core.designsystem.theme.TalkdeskElevation
 import org.talkdesk.conversation.core.designsystem.theme.TalkdeskTheme
+import org.talkdesk.conversation.core.ui.SharedTransitionKeys
+import org.talkdesk.conversation.core.ui.sharedContainer
 import org.talkdesk.conversation.core.designsystem.theme.talkdeskShadow
 import org.talkdesk.conversation.activity.impl.R
 import org.talkdesk.conversation.activity.impl.ui.ActivityPreviews
@@ -36,7 +38,10 @@ internal fun NewCallFab(
     ExtendedFloatingActionButton(
         onClick = onClick,
         expanded = expanded,
-        modifier = modifier.talkdeskShadow(TalkdeskElevation.Overlay, TalkdeskTheme.shapes.lg),
+        modifier = modifier
+            // The dialer expands out of this button when it opens.
+            .sharedContainer(SharedTransitionKeys.NewCall, TalkdeskTheme.shapes.lg)
+            .talkdeskShadow(TalkdeskElevation.Overlay, TalkdeskTheme.shapes.lg),
         shape = TalkdeskTheme.shapes.lg,
         containerColor = colors.actionPrimary,
         contentColor = colors.textOnBrand,

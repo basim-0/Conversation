@@ -21,12 +21,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import org.talkdesk.conversation.core.designsystem.component.TalkdeskButton
-import org.talkdesk.conversation.core.designsystem.component.TalkdeskButtonVariant
 import org.talkdesk.conversation.core.designsystem.component.TalkdeskEmptyState
 import org.talkdesk.conversation.core.designsystem.icon.TalkdeskIcons
 import org.talkdesk.conversation.core.designsystem.theme.TalkdeskTheme
-import org.talkdesk.conversation.home.api.AccountRoute
 import org.talkdesk.conversation.home.api.ContactsRoute
 import org.talkdesk.conversation.home.api.ConversationsRoute
 import org.talkdesk.conversation.home.api.VoicemailsRoute
@@ -35,21 +32,16 @@ import org.talkdesk.conversation.home.impl.presentation.HomeTab
 import org.talkdesk.conversation.home.impl.ui.HomePreviews
 
 /** Navigation entries for the tabs that have no feature yet. */
-internal fun EntryProviderScope<NavKey>.placeholderEntries(onSignOut: () -> Unit) {
-    entry<ContactsRoute> { TabPlaceholder(HomeTab.Contacts, onSignOut) }
-    entry<ConversationsRoute> { TabPlaceholder(HomeTab.Conversations, onSignOut) }
-    entry<VoicemailsRoute> { TabPlaceholder(HomeTab.Voicemails, onSignOut) }
-    entry<AccountRoute> { TabPlaceholder(HomeTab.Account, onSignOut) }
+internal fun EntryProviderScope<NavKey>.placeholderEntries() {
+    entry<ContactsRoute> { TabPlaceholder(HomeTab.Contacts) }
+    entry<ConversationsRoute> { TabPlaceholder(HomeTab.Conversations) }
+    entry<VoicemailsRoute> { TabPlaceholder(HomeTab.Voicemails) }
 }
 
-/**
- * Stand-in for the tabs that are not designed yet (Contacts, Conversations, Voicemails, Account).
- * Account keeps a sign-out action so the session can still be ended.
- */
+/** Stand-in for the tabs whose feature is not built yet (Contacts, Conversations, Voicemails). */
 @Composable
 internal fun TabPlaceholder(
     tab: HomeTab,
-    onSignOut: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val colors = TalkdeskTheme.colors
@@ -63,17 +55,6 @@ internal fun TabPlaceholder(
                 icon = tab.icon(),
                 title = stringResource(R.string.home_placeholder_title),
                 body = stringResource(R.string.home_placeholder_body, name),
-                action = if (tab == HomeTab.Account) {
-                    {
-                        TalkdeskButton(
-                            text = stringResource(R.string.home_sign_out),
-                            onClick = onSignOut,
-                            variant = TalkdeskButtonVariant.Secondary,
-                        )
-                    }
-                } else {
-                    null
-                },
             )
         }
     }
@@ -98,8 +79,5 @@ internal fun HomeTab.icon(): ImageVector = when (this) {
 
 @HomePreviews
 @Composable
-private fun ContactsPlaceholderPreview() = TalkdeskTheme { TabPlaceholder(HomeTab.Contacts, onSignOut = {}) }
+private fun ContactsPlaceholderPreview() = TalkdeskTheme { TabPlaceholder(HomeTab.Contacts) }
 
-@HomePreviews
-@Composable
-private fun AccountPlaceholderPreview() = TalkdeskTheme { TabPlaceholder(HomeTab.Account, onSignOut = {}) }

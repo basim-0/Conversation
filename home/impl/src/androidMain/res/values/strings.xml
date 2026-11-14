@@ -10,5 +10,4 @@
     <!-- Tabs that are not built yet -->
     <string name="home_placeholder_title">Coming soon</string>
     <string name="home_placeholder_body">%1$s isn\'t available in this version yet.</string>
-    <string name="home_sign_out">Sign out</string>
 </resources>

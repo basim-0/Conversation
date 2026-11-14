@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Account -->
+    <string name="account_title">Account</string>
+    <string name="account_feedback">Send feedback</string>
+    <string name="account_status_header">Status</string>
+    <string name="account_group_available">Available</string>
+    <string name="account_group_away">Away</string>
+    <string name="account_group_offline">Offline</string>
+    <string name="account_group_automatic">Set automatically</string>
+    <string name="account_status_automatic_note">Starts after each call and ends on its own</string>
+    <string name="account_log_out">Log out</string>
+    <string name="account_app_name">Talkdesk Conversations</string>
+    <string name="account_app_version">Version %1$s</string>
+    <string name="account_presence_available">Available</string>
+    <string name="account_presence_away">Away</string>
+    <string name="account_presence_offline">Offline</string>
+    <string name="account_presence_busy">Busy</string>
+    <string name="account_status_changed">Status set to %1$s</string>
+    <string name="account_status_changed_undo">Undo</string>
+    <string name="account_status_failed">Couldn\'t change your status</string>
+    <string name="account_status_failed_retry">Retry</string>
+    <string name="account_logout_dialog_title">Log out?</string>
+    <string name="account_logout_dialog_body">You\'ll stop receiving calls and messages on this device until you sign in again.</string>
+    <string name="account_logout_dialog_cancel">Cancel</string>
+    <string name="account_logout_in_call_title">End your call before you log out</string>
+    <string name="account_logout_in_call_ok">OK</string>
+</resources>
