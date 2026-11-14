@@ -1,3 +1,4 @@
+import AVFoundation
 import SwiftUI
 
 /// Top-level destinations of the tab bar, in display order (same as Android's `HomeTab`).
@@ -29,7 +30,7 @@ enum HomeTab: CaseIterable, Identifiable {
 
 /// The signed-in shell: a native `TabView`, so the bar is the system tab bar (Liquid Glass on iOS 26+, with its
 /// floating and minimising behaviour). Each tab keeps its own state. Tabs whose feature does not exist yet show a
-/// placeholder; Account's has Sign out.
+/// placeholder.
 ///
 /// The Voicemails "new" dot of the design has no native equivalent (`badge` draws text or a count), so it is left out
 /// until voicemail data exists.
@@ -37,36 +38,56 @@ struct HomeView: View {
     let onSignOut: () -> Void
 
     @State private var selection: HomeTab = .activity
+    @State private var showsDialer = false
+    @EnvironmentObject private var calling: CallingPlatformHost
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         TabView(selection: $selection) {
             Tab(value: HomeTab.activity) {
-                ActivityView()
+                ActivityView(onNewCall: { showsDialer = true })
             } label: {
                 label(.activity)
             }
             Tab(value: HomeTab.contacts) {
-                TabPlaceholderView(tab: .contacts, onSignOut: onSignOut)
+                TabPlaceholderView(tab: .contacts)
             } label: {
                 label(.contacts)
             }
             Tab(value: HomeTab.conversations) {
-                TabPlaceholderView(tab: .conversations, onSignOut: onSignOut)
+                TabPlaceholderView(tab: .conversations)
             } label: {
                 label(.conversations)
             }
             Tab(value: HomeTab.voicemails) {
-                TabPlaceholderView(tab: .voicemails, onSignOut: onSignOut)
+                TabPlaceholderView(tab: .voicemails)
             } label: {
                 label(.voicemails)
             }
             Tab(value: HomeTab.account) {
-                TabPlaceholderView(tab: .account, onSignOut: onSignOut)
+                AccountView(onSignOut: onSignOut)
             } label: {
                 label(.account)
             }
         }
         .tint(TalkdeskColors.textBrand)
+        // "New call" is a page sheet; once the call starts the call screen takes over, like Android's CallActivity.
+        .sheet(isPresented: $showsDialer) {
+            DialerView(onCallStarted: { showsDialer = false }, onClose: { showsDialer = false })
+        }
+        .fullScreenCover(isPresented: Binding(
+            get: { calling.showsCallScreen },
+            set: { if !$0 { calling.isMinimized = true } }
+        )) {
+            CallView(onMinimize: { calling.isMinimized = true })
+                .talkdeskTheme()
+        }
+        .onChange(of: scenePhase) { _, phase in
+            // A minimised call comes back to the front with the app (the CallKit call screen's app button too).
+            if phase == .active, calling.isInCall { calling.isMinimized = false }
+        }
+        // Answering a call from CallKit needs the microphone: ask once, before the first call.
+        .task { _ = await DialerModel.microphoneAllowed() }
     }
 
     private func label(_ tab: HomeTab) -> some View {
@@ -78,19 +99,16 @@ struct HomeView: View {
     }
 }
 
-/// Stand-in for the tabs that are not designed yet. Account keeps a sign-out action so the session can still end.
+/// Stand-in for the tabs that are not designed yet.
 private struct TabPlaceholderView: View {
     let tab: HomeTab
-    let onSignOut: () -> Void
 
     var body: some View {
         NavigationStack {
             TalkdeskEmptyState(
                 icon: tab.icon,
                 title: "Coming soon",
-                message: LocalizedStringKey("This tab isn't available in this version yet."),
-                actionTitle: tab == .account ? "Sign out" : nil,
-                action: tab == .account ? onSignOut : nil
+                message: LocalizedStringKey("This tab isn't available in this version yet.")
             )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(TalkdeskColors.bgWindow)

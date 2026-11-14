@@ -7,13 +7,16 @@ struct iOSApp: App {
         // Composition root: starts Koin; Swift supplies what only Swift can implement.
         ConversationBootstrap.shared.start(
             es256Signer: CryptoKitEs256Signer(),
-            credentials: BundleOAuthCredentials()
+            credentials: BundleOAuthCredentials(),
+            calling: CallingPlatformHost.shared.platform
         )
+        CallingPlatformHost.shared.startPushRegistry()
     }
 
     var body: some Scene {
         WindowGroup {
             ConversationRoot()
+                .environmentObject(CallingPlatformHost.shared)
                 .talkdeskTheme()
         }
     }

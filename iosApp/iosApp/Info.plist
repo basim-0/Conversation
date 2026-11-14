@@ -34,6 +34,13 @@
 	<string>$(OAUTH_UK_PRIVATE_KEY)</string>
 	<key>OAUTH_UK_KEY_ID</key>
 	<string>$(OAUTH_UK_KEY_ID)</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Talkdesk Conversations needs the microphone so you can talk on calls.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>audio</string>
+		<string>voip</string>
+	</array>
 	<key>UILaunchScreen</key>
 	<dict>
 		<key>UIColorName</key>

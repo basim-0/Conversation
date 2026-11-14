@@ -7,6 +7,8 @@ import SwiftUI
 /// `ActivityScreen`.
 struct ActivityView: View {
     @StateObject private var model = ActivityModel()
+    /// "New call" opens the dialer, a separate feature the host presents (like Android's `onNewCall`).
+    var onNewCall: () -> Void = {}
 
     var body: some View {
         let state = model.state
@@ -141,7 +143,7 @@ struct ActivityView: View {
         }
         if canStartCall(state) {
             ToolbarItem(placement: .topBarTrailing) {
-                Button(action: model.newCall) {
+                Button(action: onNewCall) {
                     TalkdeskIcons.phone
                         .resizable()
                         .frame(width: TalkdeskSizes.iconSmall, height: TalkdeskSizes.iconSmall)
